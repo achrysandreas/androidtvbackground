@@ -227,10 +227,16 @@ trending_tvshows = {'results': valid_tvshows}
 # Create a directory to save the backgrounds and clear its contents if it exists
 
 background_dir = "tmdb_backgrounds"
-if os.path.exists(background_dir):
-    shutil.rmtree(background_dir)
-os.makedirs(background_dir, exist_ok=True)
+# if os.path.exists(background_dir):
+#   shutil.rmtree(background_dir)
+# os.makedirs(background_dir, exist_ok=True)
 
+        self.output_dir = Path(background_dir)
+        
+        # Clean and create output directory
+        if self.output_dir.exists():
+            shutil.rmtree(self.output_dir)
+        self.output_dir.mkdir(parents=True, exist_ok=True)
 
 # Truncate overview
 def truncate_overview(overview, max_chars):
@@ -498,7 +504,7 @@ def process_image(image_url, title, is_movie, genre, year, rating, duration=None
         bckg.paste(tmdblogo, (680, custom_position[1] + 20), tmdblogo)
 
         # Save
-        filename = os.path.join(background_dir, f"{clean_filename(title)}.jpg")
+        filename = os.path.join(self.output_dir, f"{clean_filename(title)}.jpg")
         bckg = bckg.convert('RGB')
         bckg.save(filename)
         print(f"Image saved: {filename}")
