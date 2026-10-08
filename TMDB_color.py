@@ -231,7 +231,7 @@ background_dir = "tmdb_backgrounds"
 #   shutil.rmtree(background_dir)
 # os.makedirs(background_dir, exist_ok=True)
 
-self.output_dir = Path(background_dir)
+self.output_dir = background_dir
         
 # Clean and create output directory
 if self.output_dir.exists():
