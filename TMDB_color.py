@@ -231,12 +231,12 @@ background_dir = "tmdb_backgrounds"
 #   shutil.rmtree(background_dir)
 # os.makedirs(background_dir, exist_ok=True)
 
-        self.output_dir = Path(background_dir)
+self.output_dir = Path(background_dir)
         
-        # Clean and create output directory
-        if self.output_dir.exists():
-            shutil.rmtree(self.output_dir)
-        self.output_dir.mkdir(parents=True, exist_ok=True)
+# Clean and create output directory
+if self.output_dir.exists():
+    shutil.rmtree(self.output_dir)
+self.output_dir.mkdir(parents=True, exist_ok=True)
 
 # Truncate overview
 def truncate_overview(overview, max_chars):
