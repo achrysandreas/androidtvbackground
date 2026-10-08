@@ -32,8 +32,8 @@ numberoftvshows = 5
 # TV Exclusion list - this filter will exclude TV shows from chosen countries that have a specific genre
 tv_excluded_countries = ['jp', 'kr', 'cn', 'in', 'XX', 'XX']  # ISO 3166-1 alpha-2 codes lowercas, jp, kr, us for Japan, Korea, and the US
 tv_excluded_genres = {
-    '*': ['Horror'],  # put the country code as above an add genre like hooror, the would look like 'US':['Horror'] would filter all us horror movies 
-    'XX': ['XXXX', 'XXX', 'XXXX', 'XXXX'],  # 'KR':['Animation','Drama'] Exclude Animation and Drama from Korea
+    'US': ['Horror'],  # put the country code as above an add genre like hooror, the would look like 'US':['Horror'] would filter all us horror movies 
+    'GB': ['Horror'],  # 'KR':['Animation','Drama'] Exclude Animation and Drama from Korea
     'XX': ['XXXX','XXXX'],           # 'US':['Animation']Exclude Animation from the US
     'XX': ['*'],
     'XX': ['*'],
@@ -43,8 +43,8 @@ tv_excluded_genres = {
 # Movie Exclusion list - this filter will exclude movies from chosen countries that have a specific genre
 movie_excluded_countries = ['jp', 'kr', 'cn', 'in', 'XX', 'XX']  # ISO 3166-1 alpha-2 codes lowercas, jp, kr, us for Japan, Korea, and the US
 movie_excluded_genres = {
-    '*': ['Horror'],  # put the country code as above an add genre like hooror, the would look like 'US':['Horror'] would filter all us horror movies 
-    'XX': ['XXXX', 'XXX', 'XXXX', 'XXXX'],  # 'KR':['Animation','Drama'] Exclude Animation and Drama from Korea
+    'US': ['Horror'],  # put the country code as above an add genre like hooror, the would look like 'US':['Horror'] would filter all us horror movies 
+    'GB': ['Horror'],  # 'KR':['Animation','Drama'] Exclude Animation and Drama from Korea
     'XX': ['XXXX','XXXX'],           # 'US':['Animation']Exclude Animation from the US
     'XX': ['*'],
     'XX': ['*'],
