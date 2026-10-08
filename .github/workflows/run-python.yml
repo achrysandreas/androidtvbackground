@@ -28,9 +28,10 @@ jobs:
 
       - name: Run TMDB Color Script
         env:
-          # 2. Pass your TMDB API keys securely from GitHub Secrets to the script
-          TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }} 
+          # This maps your hidden GitHub secret into an environment variable the script can see
+          TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
           TMDB_LANGUAGE: "en-US"
+          # Add any other variables here that are required by the .env.example file
         run: python TMDB_color.py
 
       - name: Commit and Push Wallpapers
