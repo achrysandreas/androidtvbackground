@@ -6,10 +6,12 @@ on:
   workflow_dispatch:   # Allows manual execution
 
 jobs:
-  build-and-push:
+  run-and-push:
     runs-on: ubuntu-latest
+    
+    # 🌟 THIS KEY IS REQURED TO RESOLVE EXIT CODE 128
     permissions:
-      contents: write # 1. Allows pushing changes back to the repo
+      contents: write
 
     steps:
       - name: Checkout Code
