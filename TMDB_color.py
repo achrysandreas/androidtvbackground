@@ -32,23 +32,23 @@ numberoftvshows = 5
 # TV Exclusion list - this filter will exclude TV shows from chosen countries that have a specific genre
 tv_excluded_countries = ['jp', 'kr', 'cn', 'in', 'us', 'gb']  # ISO 3166-1 alpha-2 codes lowercas, jp, kr, us for Japan, Korea, and the US
 tv_excluded_genres = {
-    'us': ['Horror'],  # put the country code as above an add genre like hooror, the would look like 'US':['Horror'] would filter all us horror movies 
-    'gb': ['Horror'],  # 'KR':['Animation','Drama'] Exclude Animation and Drama from Korea
-    'jp': ['*'],           # 'US':['Animation']Exclude Animation from the US
-    'kr': ['*'],
-    'cn': ['*'],
-    'in': ['*']
+    'US': ['Horror'],  # put the country code as above an add genre like hooror, the would look like 'US':['Horror'] would filter all us horror movies 
+    'GB': ['Horror'],  # 'KR':['Animation','Drama'] Exclude Animation and Drama from Korea
+    'JP': ['*'],           # 'US':['Animation']Exclude Animation from the US
+    'KR': ['*'],
+    'CN': ['*'],
+    'IN': ['*']
 }
 
 # Movie Exclusion list - this filter will exclude movies from chosen countries that have a specific genre
 movie_excluded_countries = ['jp', 'kr', 'cn', 'in', 'us', 'gb']  # ISO 3166-1 alpha-2 codes lowercas, jp, kr, us for Japan, Korea, and the US
 movie_excluded_genres = {
-    'us': ['Horror'],  # put the country code as above an add genre like hooror, the would look like 'US':['Horror'] would filter all us horror movies 
-    'gb': ['Horror'],  # 'KR':['Animation','Drama'] Exclude Animation and Drama from Korea
-    'jp': ['*'],           # 'US':['Animation']Exclude Animation from the US
-    'kr': ['*'],
-    'cn': ['*'],
-    'in': ['*']
+    'US': ['Horror'],  # put the country code as above an add genre like hooror, the would look like 'US':['Horror'] would filter all us horror movies 
+    'GB': ['Horror'],  # 'KR':['Animation','Drama'] Exclude Animation and Drama from Korea
+    'JP': ['*'],           # 'US':['Animation']Exclude Animation from the US
+    'KR': ['*'],
+    'CN': ['*'],
+    'IN': ['*']
 }
 
 # Keyword exclusion list - this filter will exclude movies or TV shows that contain a specific keyword in their TMDB profile
