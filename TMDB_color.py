@@ -227,16 +227,16 @@ trending_tvshows = {'results': valid_tvshows}
 # Create a directory to save the backgrounds and clear its contents if it exists
 
 background_dir = "tmdb_backgrounds"
-# if os.path.exists(background_dir):
-#   shutil.rmtree(background_dir)
-# os.makedirs(background_dir, exist_ok=True)
+ if os.path.exists(background_dir):
+   shutil.rmtree(background_dir)
+ os.makedirs(background_dir, exist_ok=True)
 
-self.output_dir = background_dir
+# self.output_dir = background_dir
         
 # Clean and create output directory
-if self.output_dir.exists():
-    shutil.rmtree(self.output_dir)
-self.output_dir.mkdir(parents=True, exist_ok=True)
+# if self.output_dir.exists():
+#     shutil.rmtree(self.output_dir)
+# self.output_dir.mkdir(parents=True, exist_ok=True)
 
 # Truncate overview
 def truncate_overview(overview, max_chars):
