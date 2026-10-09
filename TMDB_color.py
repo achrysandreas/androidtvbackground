@@ -120,7 +120,7 @@ def get_tv_keywords(tv_id):
 # Filter criteria for movies
 def should_exclude_movie(movie, movie_excluded_countries=movie_excluded_countries, movie_excluded_genres=movie_excluded_genres, excluded_keywords=excluded_keywords):
     # Check if the movie's country is in the excluded countries list
-    origin_countries = [c.lower() for c in movie.get('origin_country', [])]
+    origin_countries = [c.lower() for c in movie.get('production.companies[1].origin_country', [])]
     print(f"Origin countries: {movie['title']} ({origin_countries})")
     
     genres = [movie_genres.get(genre_id, '') for genre_id in movie.get('genre_ids', [])]
@@ -517,6 +517,12 @@ def process_image(image_url, title, is_movie, genre, year, rating, duration=None
 # Process each trending movie
 for movie in trending_movies.get('results', []):
 
+    movie_details = get_movie_details(movie['id'])
+
+    if should_exclude_movie(movie):
+        print(f"Excluded Movie: {movie['title']} ({movie.get('origin_country')})")
+        continue
+        
     # Extract movie details
     title = movie['title']
     overview = movie['overview']
@@ -525,12 +531,7 @@ for movie in trending_movies.get('results', []):
     genre = ', '.join([movie_genres[genre_id] for genre_id in movie['genre_ids']])
 
     # Fetch additional movie details
-    movie_details = get_movie_details(movie['id'])
     duration = movie_details.get('runtime', 0)
-
-    if should_exclude_movie(movie):
-        print(f"Excluded Movie: {movie['title']} ({movie.get('origin_country')})")
-        continue
         
     # Format duration as hours and minutes
     if duration:
@@ -554,6 +555,9 @@ for movie in trending_movies.get('results', []):
 
 # Process trending TV shows
 for tvshow in trending_tvshows.get('results', []):
+
+    tv_details = get_tv_show_details(tvshow['id'])
+
     if should_exclude_tvshow(tvshow):
         print(f"Excluded TV Show: {tvshow['name']} ({tvshow.get('origin_country')})")
         continue
@@ -566,7 +570,6 @@ for tvshow in trending_tvshows.get('results', []):
     genre = ', '.join([tv_genres[genre_id] for genre_id in tvshow['genre_ids']])
 
     # Fetch additional TV show details
-    tv_details = get_tv_show_details(tvshow['id'])
     seasons = tv_details.get('number_of_seasons', 0)
 
     # Check if backdrop image is available
