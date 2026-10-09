@@ -95,7 +95,7 @@ def get_tv_show_details(tv_id):
 
 # Fetching movie details
 def get_movie_details(movie_id):
-    movie_details_url = f'{TMDB_BASE_URL}/movie/{movie_id}?language={LANGUAGE}'
+    movie_details_url = f'{TMDB_BASE_URL}/movie/{movie_id}?language={LANGUAGE}&append_to_response=details'
     movie_details_response = requests.get(movie_details_url, headers=headers)
     return movie_details_response.json()
 
@@ -115,7 +115,6 @@ def get_tv_keywords(tv_id):
     if response.status_code == 200:
         return [keyword['name'].lower() for keyword in response.json().get('results', [])]
     return []
-
 
 
 # Filter criteria for movies
