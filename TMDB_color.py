@@ -41,9 +41,9 @@ tv_excluded_genres = {
 }
 
 # Movie Exclusion list - this filter will exclude movies from chosen countries that have a specific genre
-movie_excluded_countries = ['JP', 'KR', 'CN', 'IN', 'US', 'GB']  # ISO 3166-1 alpha-2 codes lowercas, jp, kr, us for Japan, Korea, and the US
+movie_excluded_countries = ['jp', 'kr', 'cn', 'in', 'us', 'gb']  # ISO 3166-1 alpha-2 codes lowercas, jp, kr, us for Japan, Korea, and the US
 movie_excluded_genres = {
-    'US': [27],  # put the country code as above an add genre like hooror, the would look like 'US':['Horror'] would filter all us horror movies 
+    'US': ['Horror'],  # put the country code as above an add genre like hooror, the would look like 'US':['Horror'] would filter all us horror movies 
     'GB': ['*'],  # 'KR':['Animation','Drama'] Exclude Animation and Drama from Korea
     'JP': ['*'],           # 'US':['Animation']Exclude Animation from the US
     'KR': ['*'],
@@ -89,7 +89,7 @@ tv_genres = {genre['id']: genre['name'] for genre in genres_data.get('genres', [
 
 # Fetching TV show details
 def get_tv_show_details(tv_id):
-    tv_details_url = f'{TMDB_BASE_URL}/tv/{tv_id}?language={LANGUAGE}'
+    tv_details_url = f'{TMDB_BASE_URL}/tv/{tv_id}?language={LANGUAGE}&append_to_response=details'
     tv_details_response = requests.get(tv_details_url, headers=headers)
     return tv_details_response.json()
 
