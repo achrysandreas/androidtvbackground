@@ -516,9 +516,6 @@ def process_image(image_url, title, is_movie, genre, year, rating, duration=None
 
 # Process each trending movie
 for movie in trending_movies.get('results', []):
-    if should_exclude_movie(movie):
-        print(f"Excluded Movie: {movie['title']} ({movie.get('origin_country')})")
-        continue
 
     # Extract movie details
     title = movie['title']
@@ -531,6 +528,10 @@ for movie in trending_movies.get('results', []):
     movie_details = get_movie_details(movie['id'])
     duration = movie_details.get('runtime', 0)
 
+    if should_exclude_movie(movie):
+        print(f"Excluded Movie: {movie['title']} ({movie.get('origin_country')})")
+        continue
+        
     # Format duration as hours and minutes
     if duration:
         hours = duration // 60
