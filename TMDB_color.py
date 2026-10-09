@@ -41,9 +41,9 @@ tv_excluded_genres = {
 }
 
 # Movie Exclusion list - this filter will exclude movies from chosen countries that have a specific genre
-movie_excluded_countries = ['JP', 'KR', 'CN', '|IN', 'US', 'GB']  # ISO 3166-1 alpha-2 codes lowercas, jp, kr, us for Japan, Korea, and the US
+movie_excluded_countries = ['JP', 'KR', 'CN', 'IN', 'US', 'GB']  # ISO 3166-1 alpha-2 codes lowercas, jp, kr, us for Japan, Korea, and the US
 movie_excluded_genres = {
-    'US': ['*'],  # put the country code as above an add genre like hooror, the would look like 'US':['Horror'] would filter all us horror movies 
+    'US': [27],  # put the country code as above an add genre like hooror, the would look like 'US':['Horror'] would filter all us horror movies 
     'GB': ['*'],  # 'KR':['Animation','Drama'] Exclude Animation and Drama from Korea
     'JP': ['*'],           # 'US':['Animation']Exclude Animation from the US
     'KR': ['*'],
@@ -122,6 +122,8 @@ def get_tv_keywords(tv_id):
 def should_exclude_movie(movie, movie_excluded_countries=movie_excluded_countries, movie_excluded_genres=movie_excluded_genres, excluded_keywords=excluded_keywords):
     # Check if the movie's country is in the excluded countries list
     origin_countries = [c.lower() for c in movie.get('origin_country', [])]
+    print(f"Origin countries: {movie['title']} ({origin_countries})")
+    
     genres = [movie_genres.get(genre_id, '') for genre_id in movie.get('genre_ids', [])]
     
     # Fetch movie keywords
