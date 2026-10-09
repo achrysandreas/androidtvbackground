@@ -122,7 +122,7 @@ def get_tv_keywords(tv_id):
 def should_exclude_movie(movie, movie_excluded_countries=movie_excluded_countries, movie_excluded_genres=movie_excluded_genres, excluded_keywords=excluded_keywords):
     # Check if the movie's country is in the excluded countries list
     origin_countries = [c.lower() for c in movie.get('origin_country', [])]
-    print(f"Origin countries: {movie['title']} ({origin_countries})")
+    print(f"Origin countries: {movie['title']} ({movie.get('origin_country', [])})")
     
     genres = [movie_genres.get(genre_id, '') for genre_id in movie.get('genre_ids', [])]
     
