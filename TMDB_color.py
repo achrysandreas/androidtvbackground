@@ -32,8 +32,8 @@ numberoftvshows = 5
 # TV Exclusion list - this filter will exclude TV shows from chosen countries that have a specific genre
 tv_excluded_countries = ['jp', 'kr', 'cn', 'in', 'us', 'gb']  # ISO 3166-1 alpha-2 codes lowercas, jp, kr, us for Japan, Korea, and the US
 tv_excluded_genres = {
-    'US': ['Horror'],  # put the country code as above an add genre like hooror, the would look like 'US':['Horror'] would filter all us horror movies 
-    'GB': ['Horror'],  # 'KR':['Animation','Drama'] Exclude Animation and Drama from Korea
+    'US': ['*'],  # put the country code as above an add genre like hooror, the would look like 'US':['Horror'] would filter all us horror movies 
+    'GB': ['*'],  # 'KR':['Animation','Drama'] Exclude Animation and Drama from Korea
     'JP': ['*'],           # 'US':['Animation']Exclude Animation from the US
     'KR': ['*'],
     'CN': ['*'],
@@ -43,8 +43,8 @@ tv_excluded_genres = {
 # Movie Exclusion list - this filter will exclude movies from chosen countries that have a specific genre
 movie_excluded_countries = ['jp', 'kr', 'cn', 'in', 'us', 'gb']  # ISO 3166-1 alpha-2 codes lowercas, jp, kr, us for Japan, Korea, and the US
 movie_excluded_genres = {
-    'US': ['Horror'],  # put the country code as above an add genre like hooror, the would look like 'US':['Horror'] would filter all us horror movies 
-    'GB': ['Horror'],  # 'KR':['Animation','Drama'] Exclude Animation and Drama from Korea
+    'US': ['*'],  # put the country code as above an add genre like hooror, the would look like 'US':['Horror'] would filter all us horror movies 
+    'GB': ['*'],  # 'KR':['Animation','Drama'] Exclude Animation and Drama from Korea
     'JP': ['*'],           # 'US':['Animation']Exclude Animation from the US
     'KR': ['*'],
     'CN': ['*'],
@@ -52,7 +52,7 @@ movie_excluded_genres = {
 }
 
 # Keyword exclusion list - this filter will exclude movies or TV shows that contain a specific keyword in their TMDB profile
-excluded_keywords = ['XX', 'XX', 'XX', 'XX', 'XX', 'XX', 'XX','XX']  # like ['adult']
+excluded_keywords = []  # like ['adult']
 
 # Filter movies by release date and TV shows by last air date
 max_air_date = datetime.now() - timedelta(days=90)  # specify the number of days since the movie release or the TV show last air date, shows before this date will be excluded
