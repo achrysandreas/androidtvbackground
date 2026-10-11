@@ -448,7 +448,7 @@ def process_image(image_url, title, is_movie, genre, year, rating, duration=None
         # Fonts
         font_title = ImageFont.truetype(truetype_path, size=190)
         font_overview = ImageFont.truetype(truetype_path, size=50)
-        font_custom = ImageFont.truetype(truetype_path, size=60)
+        font_custom = ImageFont.truetype(truetype_path, size=50)    #was 60
 
         shadow_color = "black"
         main_color = "white"
@@ -456,9 +456,9 @@ def process_image(image_url, title, is_movie, genre, year, rating, duration=None
         metadata_color = "white"
 
         title_position = (200, 420)
-        overview_position = (210, 730)
+        overview_position = (210, 750)    #was 730
         shadow_offset = 2
-        info_position = (210, 650)
+        info_position = (210, 660)    #was 650
 
         # Wrap overview
         wrapped_overview = "\n".join(textwrap.wrap(overview, width=65, max_lines=3, placeholder=" ..."))
