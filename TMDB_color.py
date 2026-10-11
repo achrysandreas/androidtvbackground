@@ -530,6 +530,11 @@ def process_image(image_url, title, is_movie, genre, year, rating, duration=None
 
 # Process each trending movie
 
+    for movie in trending_movies.get('results', []):
+    if should_exclude_movie(movie):
+        print(f"Excluded Movie: {movie['title']} ({movie.get('origin_country')})")
+        continue
+            
     # Extract movie details
     title = movie['title']
     overview = movie['overview']
@@ -540,11 +545,6 @@ def process_image(image_url, title, is_movie, genre, year, rating, duration=None
     # Fetch additional movie details
     movie_details = get_movie_details(movie['id'])
     duration = movie_details.get('runtime', 0)
-
-    for movie in trending_movies.get('results', []):
-        if should_exclude_movie(movie):
-            print(f"Excluded Movie: {movie['title']} ({movie.get('origin_country')})")
-            continue
         
     # Format duration as hours and minutes
     if duration:
@@ -569,6 +569,10 @@ def process_image(image_url, title, is_movie, genre, year, rating, duration=None
 # Process trending TV shows
 for tvshow in trending_tvshows.get('results', []):
 
+    if should_exclude_tvshow(tvshow):
+        print(f"Excluded TV Show: {tvshow['name']} ({tvshow.get('origin_country')})")
+        continue
+    
     # Extract TV show details
     title = truncate_overview(tvshow['name'], 38)
     overview = tvshow['overview']
@@ -579,10 +583,6 @@ for tvshow in trending_tvshows.get('results', []):
     # Fetch additional TV show details
     tv_details = get_tv_show_details(tvshow['id'])
     seasons = tv_details.get('number_of_seasons', 0)
-
-    if should_exclude_tvshow(tvshow):
-        print(f"Excluded TV Show: {tvshow['name']} ({tvshow.get('origin_country')})")
-        continue
 
     # Check if backdrop image is available
     backdrop_path = tvshow['backdrop_path']
