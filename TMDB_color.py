@@ -209,13 +209,13 @@ def should_exclude_tvshow(tvshow, tv_excluded_countries=tv_excluded_countries, t
 #trending_tvshows_url = f'{TMDB_BASE_URL}/trending/tv/week?language={LANGUAGE}'
 
 # Discover URLs
-trending_movies_url = f'{TMDB_BASE_URL}/discover/movie?without_genres=27&with_release_type=4&with_origin_country=US|GB&certification.lte=15&certification_country=GB&include_adult=false&include_video=false&language=en-US&page=1&region=GB&sort_by=primary_release_date.desc&vote_average.gte=5&vote_count.gte=10&watch_region=GB'
-trending_tvshows_url = f'{TMDB_BASE_URL}/discover/tv?without_genres=10766|10763|10767&with_release_type=4&with_origin_country=US|GB&certification.lte=15&certification_country=GB&include_adult=false&include_video=false&language=e&page=1&region=GB&sort_by=first_air_date.desc&vote_average.gte=5&vote_count.gte=10&watch_region=GB'
+trending_movies_url = f'{TMDB_BASE_URL}/discover/movie?without_genres=27|99&with_release_type=4&with_origin_country=US|GB&certification.lte=15&certification_country=GB&include_adult=false&include_video=false&language=en-US&page=1&region=GB&sort_by=primary_release_date.desc&vote_average.gte=5&vote_count.gte=10&watch_region=GB'
+trending_tvshows_url = f'{TMDB_BASE_URL}/discover/tv?without_genres=10766|10763|10767|10768|99&with_release_type=4&with_origin_country=US|GB&certification.lte=15&certification_country=GB&include_adult=false&include_video=false&language=e&page=1&region=GB&sort_by=first_air_date.desc&vote_average.gte=5&vote_count.gte=10&watch_region=GB'
 
 # Fetch more than required to allow filtering
 initial_fetch_count = numberofmovies + 10  # Fetch 15 to get at least 5 valid ones
 #trending_movies_url = f'{TMDB_BASE_URL}/trending/movie/week?language={LANGUAGE}'
-trending_movies_url = f'{TMDB_BASE_URL}/discover/movie?without_genres=27&with_release_type=4&with_origin_country=US|GB&certification.lte=15&certification_country=GB&include_adult=false&include_video=false&language=en-US&page=1&region=GB&sort_by=primary_release_date.desc&vote_average.gte=5&vote_count.gte=10&watch_region=GB'
+trending_movies_url = f'{TMDB_BASE_URL}/discover/movie?without_genres=27|99&with_release_type=4&with_origin_country=US|GB&certification.lte=15&certification_country=GB&include_adult=false&include_video=false&language=en-US&page=1&region=GB&sort_by=primary_release_date.desc&vote_average.gte=5&vote_count.gte=10&watch_region=GB'
 trending_movies_response = requests.get(trending_movies_url, headers=headers)
 all_movies = trending_movies_response.json().get('results', [])[:initial_fetch_count]
 
@@ -236,7 +236,7 @@ trending_movies = {'results': valid_movies}
 # Fetching trending TV shows
 initial_fetch_count = numberoftvshows + 10  # Fetch more than needed
 #trending_tvshows_url = f'{TMDB_BASE_URL}/trending/tv/week?language={LANGUAGE}'
-trending_tvshows_url = f'{TMDB_BASE_URL}/discover/tv?without_genres=10766|10763|10767&with_release_type=4&with_origin_country=US|GB&certification.lte=15&certification_country=GB&include_adult=false&include_video=false&language=e&page=1&region=GB&sort_by=first_air_date.desc&vote_average.gte=5&vote_count.gte=10&watch_region=GB'
+trending_tvshows_url = f'{TMDB_BASE_URL}/discover/tv?without_genres=10766|10763|10767|10768|99&with_release_type=4&with_origin_country=US|GB&certification.lte=15&certification_country=GB&include_adult=false&include_video=false&language=e&page=1&region=GB&sort_by=first_air_date.desc&vote_average.gte=5&vote_count.gte=10&watch_region=GB'
 trending_tvshows_response = requests.get(trending_tvshows_url, headers=headers)
 all_tvshows = trending_tvshows_response.json().get('results', [])[:initial_fetch_count]
 
@@ -357,7 +357,7 @@ def create_blurry_background(image, size=(3840, 2160), blur_radius=800, dither_s
     
     return bg_img, is_uniform
 
-def generate_background_fast(input_img, target_width=3000):
+def generate_background_fast(input_img, target_width=1000):
     # Step 1: Create blurry/dark canvas
     canvas_rgb, is_uniform = create_blurry_background(input_img, size=(3840, 2160), blur_radius=800)
 
@@ -438,7 +438,7 @@ def process_image(image_url, title, is_movie, genre, year, rating, duration=None
         input_img = Image.open(BytesIO(response.content))
 
         # Generate blurred/vignette background instead of static overlay
-        bckg = generate_background_fast(input_img, target_width=3000)
+        bckg = generate_background_fast(input_img, target_width=1000)
 
 
         draw = ImageDraw.Draw(bckg)
