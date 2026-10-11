@@ -25,12 +25,12 @@ headers = {
 # Get current date in YYYYMMDD formaat
 date_str = datetime.now().strftime("%Y%m%d")
 
-# Set the number of movies and tvshwos to get
-numberofmovies = 5
-numberoftvshows = 5
+# Set the number of movies and tvshows to get
+numberofmovies = 10
+numberoftvshows = 10
 
 # TV Exclusion list - this filter will exclude TV shows from chosen countries that have a specific genre
-tv_excluded_countries = ['jp', 'kr', 'cn', 'in', 'us', 'gb']  # ISO 3166-1 alpha-2 codes lowercas, jp, kr, us for Japan, Korea, and the US
+tv_excluded_countries = ['jp', 'kr', 'cn', 'in']  # ISO 3166-1 alpha-2 codes lowercas, jp, kr, us for Japan, Korea, and the US
 tv_excluded_genres = ['Horror']  # ISO 3166-1 alpha-2 codes lowercas, jp, kr, us for Japan, Korea, and the US
 #tv_excluded_genres = {
 #    'US': ['Horror'],  # put the country code as above an add genre like hooror, the would look like 'US':['Horror'] would filter all us horror movies 
@@ -42,7 +42,7 @@ tv_excluded_genres = ['Horror']  # ISO 3166-1 alpha-2 codes lowercas, jp, kr, us
 #}
 
 # Movie Exclusion list - this filter will exclude movies from chosen countries that have a specific genre
-movie_excluded_countries = ['jp', 'kr', 'cn', 'in', 'us', 'gb']  # ISO 3166-1 alpha-2 codes lowercas, jp, kr, us for Japan, Korea, and the US
+movie_excluded_countries = ['jp', 'kr', 'cn', 'in']  # ISO 3166-1 alpha-2 codes lowercas, jp, kr, us for Japan, Korea, and the US
 movie_excluded_genres = ['Horror']  # ISO 3166-1 alpha-2 codes lowercas, jp, kr, us for Japan, Korea, and the US
 
 #movie_excluded_genres = {
