@@ -210,9 +210,9 @@ def should_exclude_tvshow(tvshow, tv_excluded_countries=tv_excluded_countries, t
 
 # Discover URLs
 # https://api.themoviedb.org/3/discover/movie?certification.lte=12&certification_country=GB&include_adult=false&include_video=false&language=en-US&page=1&region=GB&sort_by=popularity.desc&vote_average.gte=5&watch_region=GB
-trending_movies_url = f'{TMDB_BASE_URL}/discover/movie?certification.lte=12&certification_country=GB&include_adult=false&include_video=false&language=en-US&page=1&region=GB&sort_by=popularity.desc&vote_average.gte=5&watch_region=GB'
+trending_movies_url = f'{TMDB_BASE_URL}/discover/movie?certification.lte=12&certification_country=GB&include_adult=false&include_video=false&language=en-US&page=1&region=GB&sort_by=first_air_date.desc&vote_average.gte=5&vote_count.gte=10&watch_region=GB'
 # https://api.themoviedb.org/3/discover/tv?without_genres=10766|10763|10767&with_release_type=4&with_origin_country=US|GB&certification.lte=12&certification_country=GB&include_adult=false&include_video=false&language=en-US&page=1&region=GB&sort_by=popularity.desc&vote_average.gte=5&watch_region=GB
-trending_tvshows_url = f'{TMDB_BASE_URL}/discover/tv?without_genres=10766|10763|10767&with_release_type=4&with_origin_country=US|GB&certification.lte=12&certification_country=GB&include_adult=false&include_video=false&language=e&page=1&region=GB&sort_by=popularity.desc&vote_average.gte=5&watch_region=GB'
+trending_tvshows_url = f'{TMDB_BASE_URL}/discover/tv?without_genres=10766|10763|10767&with_release_type=4&with_origin_country=US|GB&certification.lte=12&certification_country=GB&include_adult=false&include_video=false&language=e&page=1&region=GB&sort_by=first_air_date.desc&vote_average.gte=5&vote_count.gte=10&watch_region=GB'
 
 # Fetch more than required to allow filtering
 initial_fetch_count = numberofmovies + 10  # Fetch 15 to get at least 5 valid ones
