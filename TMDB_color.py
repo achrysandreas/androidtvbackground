@@ -215,7 +215,7 @@ trending_tvshows_url = f'{TMDB_BASE_URL}/discover/tv?without_genres=10766|10763|
 # Fetch more than required to allow filtering
 initial_fetch_count = numberofmovies + 10  # Fetch 15 to get at least 5 valid ones
 #trending_movies_url = f'{TMDB_BASE_URL}/trending/movie/week?language={LANGUAGE}'
-trending_movies_url = f'{TMDB_BASE_URL}/discover/movie?without_genres=27&with_release_type=4&with_origin_country=US|GB&certification.lte=12&certification_country=GB&include_adult=false&include_video=false&language=en-US&page=1&region=GB&sort_by=first_air_date.desc&vote_average.gte=5&vote_count.gte=10&watch_region=GB'
+trending_movies_url = f'{TMDB_BASE_URL}/discover/movie?without_genres=27&with_release_type=4&with_origin_country=US|GB&certification.lte=15&certification_country=GB&include_adult=false&include_video=false&language=en-US&page=1&region=GB&sort_by=primary_release_date.desc&vote_average.gte=5&vote_count.gte=10&watch_region=GB'
 trending_movies_response = requests.get(trending_movies_url, headers=headers)
 all_movies = trending_movies_response.json().get('results', [])[:initial_fetch_count]
 
@@ -236,7 +236,7 @@ trending_movies = {'results': valid_movies}
 # Fetching trending TV shows
 initial_fetch_count = numberoftvshows + 10  # Fetch more than needed
 #trending_tvshows_url = f'{TMDB_BASE_URL}/trending/tv/week?language={LANGUAGE}'
-trending_tvshows_url = f'{TMDB_BASE_URL}/discover/tv?without_genres=10766|10763|10767&with_release_type=4&with_origin_country=US|GB&certification.lte=12&certification_country=GB&include_adult=false&include_video=false&language=e&page=1&region=GB&sort_by=first_air_date.desc&vote_average.gte=5&vote_count.gte=10&watch_region=GB'
+trending_tvshows_url = f'{TMDB_BASE_URL}/discover/tv?without_genres=10766|10763|10767&with_release_type=4&with_origin_country=US|GB&certification.lte=15&certification_country=GB&include_adult=false&include_video=false&language=e&page=1&region=GB&sort_by=first_air_date.desc&vote_average.gte=5&vote_count.gte=10&watch_region=GB'
 trending_tvshows_response = requests.get(trending_tvshows_url, headers=headers)
 all_tvshows = trending_tvshows_response.json().get('results', [])[:initial_fetch_count]
 
