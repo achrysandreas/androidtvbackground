@@ -581,7 +581,7 @@ for tvshow in trending_tvshows.get('results', []):
     seasons = tv_details.get('number_of_seasons', 0)
 
     if should_exclude_tvshow(tvshow_details):
-        print(f"Excluded TV Show: {tvshow['name']} ({tvshow_details.get('origin_country')})")
+        print(f"Excluded TV Show: {tvshow['name']} ({tvshow.get('origin_country')})")
         continue
 
     # Check if backdrop image is available
