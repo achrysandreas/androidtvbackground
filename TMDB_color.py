@@ -357,7 +357,7 @@ def create_blurry_background(image, size=(3840, 2160), blur_radius=800, dither_s
     
     return bg_img, is_uniform
 
-def generate_background_fast(input_img, target_width=1000):
+def generate_background_fast(input_img, target_width=2000):
     # Step 1: Create blurry/dark canvas
     canvas_rgb, is_uniform = create_blurry_background(input_img, size=(3840, 2160), blur_radius=800)
 
@@ -438,7 +438,7 @@ def process_image(image_url, title, is_movie, genre, year, rating, duration=None
         input_img = Image.open(BytesIO(response.content))
 
         # Generate blurred/vignette background instead of static overlay
-        bckg = generate_background_fast(input_img, target_width=1000)
+        bckg = generate_background_fast(input_img, target_width=2000)
 
 
         draw = ImageDraw.Draw(bckg)
