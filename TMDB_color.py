@@ -530,7 +530,7 @@ def process_image(image_url, title, is_movie, genre, year, rating, duration=None
 
 # Process each trending movie
 
-    for movie in trending_movies.get('results', []):
+for movie in trending_movies.get('results', []):
     if should_exclude_movie(movie):
         print(f"Excluded Movie: {movie['title']} ({movie.get('origin_country')})")
         continue
