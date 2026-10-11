@@ -75,8 +75,9 @@ if not os.path.exists(truetype_path):
     except Exception as e:
         print(f"An error occurred while downloading the Roboto-Light font: {e}")
 
-
-
+# Discover URL - Movie
+# https://api.themoviedb.org/3/discover/movie?certification.lte=12&certification_country=GB&include_adult=false&include_video=false&language=en-US&page=1&region=GB&sort_by=popularity.desc&vote_average.gte=5&watch_region=GB
+genres_url =f'{TMDB_BASE_URL}/discover/movie?certification.lte=12&certification_country=GB&include_adult=false&include_video=false&language=en-US&page=1&region=GB&sort_by=popularity.desc&vote_average.gte=5&watch_region=GB'
 
 # Fetching genres for movies
 genres_url = f'{TMDB_BASE_URL}/genre/movie/list?language={LANGUAGE}'
@@ -84,8 +85,12 @@ genres_response = requests.get(genres_url, headers=headers)
 genres_data = genres_response.json()
 movie_genres = {genre['id']: genre['name'] for genre in genres_data.get('genres', [])}
 
+# Discover URL - TV
+# https://api.themoviedb.org/3/discover/tv?without_genres=10766|10763|10767&with_release_type=4&with_origin_country=US|GB&certification.lte=12&certification_country=GB&include_adult=false&include_video=false&language=en-US&page=1&region=GB&sort_by=popularity.desc&vote_average.gte=5&watch_region=GB
+genres_url = f'{TMDB_BASE_URL}/discover/tv?without_genres=10766|10763|10767&with_release_type=4&with_origin_country=US|GB&certification.lte=12&certification_country=GB&include_adult=false&include_video=false&language=e&page=1&region=GB&sort_by=popularity.desc&vote_average.gte=5&watch_region=GB'
+
 # Fetching genres for TV shows
-genres_url = f'{TMDB_BASE_URL}/genre/tv/list?language={LANGUAGE}'
+# genres_url = f'{TMDB_BASE_URL}/genre/tv/list?language={LANGUAGE}'
 genres_response = requests.get(genres_url, headers=headers)
 genres_data = genres_response.json()
 tv_genres = {genre['id']: genre['name'] for genre in genres_data.get('genres', [])}
