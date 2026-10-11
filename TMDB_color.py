@@ -26,8 +26,8 @@ headers = {
 date_str = datetime.now().strftime("%Y%m%d")
 
 # Set the number of movies and tvshows to get
-numberofmovies = 10
-numberoftvshows = 10
+numberofmovies = 5
+numberoftvshows = 5
 
 # TV Exclusion list - this filter will exclude TV shows from chosen countries that have a specific genre
 tv_excluded_countries = ['jp', 'kr', 'cn', 'in']  # ISO 3166-1 alpha-2 codes lowercas, jp, kr, us for Japan, Korea, and the US
@@ -75,22 +75,14 @@ if not os.path.exists(truetype_path):
     except Exception as e:
         print(f"An error occurred while downloading the Roboto-Light font: {e}")
 
-# Discover URL - Movie
-# https://api.themoviedb.org/3/discover/movie?certification.lte=12&certification_country=GB&include_adult=false&include_video=false&language=en-US&page=1&region=GB&sort_by=popularity.desc&vote_average.gte=5&watch_region=GB
-genres_url =f'{TMDB_BASE_URL}/discover/movie?certification.lte=12&certification_country=GB&include_adult=false&include_video=false&language=en-US&page=1&region=GB&sort_by=popularity.desc&vote_average.gte=5&watch_region=GB'
-
 # Fetching genres for movies
 genres_url = f'{TMDB_BASE_URL}/genre/movie/list?language={LANGUAGE}'
 genres_response = requests.get(genres_url, headers=headers)
 genres_data = genres_response.json()
 movie_genres = {genre['id']: genre['name'] for genre in genres_data.get('genres', [])}
 
-# Discover URL - TV
-# https://api.themoviedb.org/3/discover/tv?without_genres=10766|10763|10767&with_release_type=4&with_origin_country=US|GB&certification.lte=12&certification_country=GB&include_adult=false&include_video=false&language=en-US&page=1&region=GB&sort_by=popularity.desc&vote_average.gte=5&watch_region=GB
-genres_url = f'{TMDB_BASE_URL}/discover/tv?without_genres=10766|10763|10767&with_release_type=4&with_origin_country=US|GB&certification.lte=12&certification_country=GB&include_adult=false&include_video=false&language=e&page=1&region=GB&sort_by=popularity.desc&vote_average.gte=5&watch_region=GB'
-
 # Fetching genres for TV shows
-# genres_url = f'{TMDB_BASE_URL}/genre/tv/list?language={LANGUAGE}'
+genres_url = f'{TMDB_BASE_URL}/genre/tv/list?language={LANGUAGE}'
 genres_response = requests.get(genres_url, headers=headers)
 genres_data = genres_response.json()
 tv_genres = {genre['id']: genre['name'] for genre in genres_data.get('genres', [])}
@@ -213,12 +205,19 @@ def should_exclude_tvshow(tvshow, tv_excluded_countries=tv_excluded_countries, t
     return False
 
 # Endpoint for trending shows
-trending_movies_url = f'{TMDB_BASE_URL}/trending/movie/week?language={LANGUAGE}'
-trending_tvshows_url = f'{TMDB_BASE_URL}/trending/tv/week?language={LANGUAGE}'
+#trending_movies_url = f'{TMDB_BASE_URL}/trending/movie/week?language={LANGUAGE}'
+#trending_tvshows_url = f'{TMDB_BASE_URL}/trending/tv/week?language={LANGUAGE}'
+
+# Discover URLs
+# https://api.themoviedb.org/3/discover/movie?certification.lte=12&certification_country=GB&include_adult=false&include_video=false&language=en-US&page=1&region=GB&sort_by=popularity.desc&vote_average.gte=5&watch_region=GB
+trending_movies_url = f'{TMDB_BASE_URL}/discover/movie?certification.lte=12&certification_country=GB&include_adult=false&include_video=false&language=en-US&page=1&region=GB&sort_by=popularity.desc&vote_average.gte=5&watch_region=GB'
+# https://api.themoviedb.org/3/discover/tv?without_genres=10766|10763|10767&with_release_type=4&with_origin_country=US|GB&certification.lte=12&certification_country=GB&include_adult=false&include_video=false&language=en-US&page=1&region=GB&sort_by=popularity.desc&vote_average.gte=5&watch_region=GB
+trending_tvshows_url = f'{TMDB_BASE_URL}/discover/tv?without_genres=10766|10763|10767&with_release_type=4&with_origin_country=US|GB&certification.lte=12&certification_country=GB&include_adult=false&include_video=false&language=e&page=1&region=GB&sort_by=popularity.desc&vote_average.gte=5&watch_region=GB'
 
 # Fetch more than required to allow filtering
 initial_fetch_count = numberofmovies + 10  # Fetch 15 to get at least 5 valid ones
-trending_movies_url = f'{TMDB_BASE_URL}/trending/movie/week?language={LANGUAGE}'
+#trending_movies_url = f'{TMDB_BASE_URL}/trending/movie/week?language={LANGUAGE}'
+trending_movies_url = f'{TMDB_BASE_URL}/discover/movie?certification.lte=12&certification_country=GB&include_adult=false&include_video=false&language=en-US&page=1&region=GB&sort_by=popularity.desc&vote_average.gte=5&watch_region=GB'
 trending_movies_response = requests.get(trending_movies_url, headers=headers)
 all_movies = trending_movies_response.json().get('results', [])[:initial_fetch_count]
 
@@ -238,7 +237,8 @@ trending_movies = {'results': valid_movies}
 
 # Fetching trending TV shows
 initial_fetch_count = numberoftvshows + 10  # Fetch more than needed
-trending_tvshows_url = f'{TMDB_BASE_URL}/trending/tv/week?language={LANGUAGE}'
+#trending_tvshows_url = f'{TMDB_BASE_URL}/trending/tv/week?language={LANGUAGE}'
+trending_tvshows_url = f'{TMDB_BASE_URL}/discover/tv?without_genres=10766|10763|10767&with_release_type=4&with_origin_country=US|GB&certification.lte=12&certification_country=GB&include_adult=false&include_video=false&language=e&page=1&region=GB&sort_by=popularity.desc&vote_average.gte=5&watch_region=GB'
 trending_tvshows_response = requests.get(trending_tvshows_url, headers=headers)
 all_tvshows = trending_tvshows_response.json().get('results', [])[:initial_fetch_count]
 
