@@ -526,7 +526,7 @@ def process_image(image_url, title, is_movie, genre, year, rating, duration=None
                   custom_text, font=font_custom, fill=shadow_color)
         draw.text(custom_position, custom_text, font=font_custom, fill=metadata_color)
 
-        bckg.paste(tmdblogo, (680, custom_position[1] + 20), tmdblogo)
+        bckg.paste(tmdblogo, (680, custom_position[1] + 10), tmdblogo)    #was custom_position[1]+20
 
         # Save
         filename = os.path.join(background_dir, f"{clean_filename(title)}.jpg")
