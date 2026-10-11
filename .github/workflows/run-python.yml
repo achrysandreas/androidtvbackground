@@ -1,6 +1,9 @@
 name: Generate TMDB Backgrounds
 
 on:
+  schedule:
+    # Runs automatically every Sat at midnight UTC
+    - cron: '0 0 * * 6'
   workflow_dispatch: # Allows manual execution
 
 jobs:
