@@ -152,7 +152,10 @@ def should_exclude_movie(movie, movie_excluded_countries=movie_excluded_countrie
     
     if release_date and release_date < max_air_date:
         return True
-    
+
+    if rating = 0:
+        return True
+        
     return False
 
 
@@ -198,6 +201,9 @@ def should_exclude_tvshow(tvshow, tv_excluded_countries=tv_excluded_countries, t
     # Include future shows
     if last_air_date and last_air_date > datetime.now():
         return False
+
+    if rating = 0:
+        return True
 
     return False
 
