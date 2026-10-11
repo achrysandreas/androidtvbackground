@@ -31,25 +31,28 @@ numberoftvshows = 5
 
 # TV Exclusion list - this filter will exclude TV shows from chosen countries that have a specific genre
 tv_excluded_countries = ['jp', 'kr', 'cn', 'in', 'us', 'gb']  # ISO 3166-1 alpha-2 codes lowercas, jp, kr, us for Japan, Korea, and the US
-tv_excluded_genres = {
-    'US': ['Horror'],  # put the country code as above an add genre like hooror, the would look like 'US':['Horror'] would filter all us horror movies 
-    'GB': ['*'],  # 'KR':['Animation','Drama'] Exclude Animation and Drama from Korea
-    'JP': ['*'],           # 'US':['Animation']Exclude Animation from the US
-    'KR': ['*'],
-    'CN': ['*'],
-    'IN': ['*']
-}
+tv_excluded_countries = ['Horror']  # ISO 3166-1 alpha-2 codes lowercas, jp, kr, us for Japan, Korea, and the US
+#tv_excluded_genres = {
+#    'US': ['Horror'],  # put the country code as above an add genre like hooror, the would look like 'US':['Horror'] would filter all us horror movies 
+#    'GB': ['*'],  # 'KR':['Animation','Drama'] Exclude Animation and Drama from Korea
+#    'JP': ['*'],           # 'US':['Animation']Exclude Animation from the US
+#    'KR': ['*'],
+#    'CN': ['*'],
+#    'IN': ['*']
+#}
 
 # Movie Exclusion list - this filter will exclude movies from chosen countries that have a specific genre
 movie_excluded_countries = ['jp', 'kr', 'cn', 'in', 'us', 'gb']  # ISO 3166-1 alpha-2 codes lowercas, jp, kr, us for Japan, Korea, and the US
-movie_excluded_genres = {
-    'US': ['Horror'],  # put the country code as above an add genre like hooror, the would look like 'US':['Horror'] would filter all us horror movies 
-    'GB': ['*'],  # 'KR':['Animation','Drama'] Exclude Animation and Drama from Korea
-    'JP': ['*'],           # 'US':['Animation']Exclude Animation from the US
-    'KR': ['*'],
-    'CN': ['*'],
-    'IN': ['*']
-}
+movie_excluded_genres = ['Horror']  # ISO 3166-1 alpha-2 codes lowercas, jp, kr, us for Japan, Korea, and the US
+
+#movie_excluded_genres = {
+#    'US': ['Horror'],  # put the country code as above an add genre like hooror, the would look like 'US':['Horror'] would filter all us horror movies 
+#    'GB': ['*'],  # 'KR':['Animation','Drama'] Exclude Animation and Drama from Korea
+#    'JP': ['*'],           # 'US':['Animation']Exclude Animation from the US
+#    'KR': ['*'],
+#    'CN': ['*'],
+#    'IN': ['*']
+#}
 
 # Keyword exclusion list - this filter will exclude movies or TV shows that contain a specific keyword in their TMDB profile
 excluded_keywords = []  # like ['adult']
@@ -120,7 +123,7 @@ def get_tv_keywords(tv_id):
 # Filter criteria for movies
 def should_exclude_movie(movie, movie_excluded_countries=movie_excluded_countries, movie_excluded_genres=movie_excluded_genres, excluded_keywords=excluded_keywords):
     # Check if the movie's country is in the excluded countries list
-    origin_countries = [c.lower() for c in movie_details.get('origin_country', [])]
+    origin_countries = [c.lower() for c in movie.get('origin_country', [])]
     print(f"Origin countries: {movie['title']} ({origin_countries})")
     
     genres = [movie_genres.get(genre_id, '') for genre_id in movie.get('genre_ids', [])]
@@ -134,11 +137,14 @@ def should_exclude_movie(movie, movie_excluded_countries=movie_excluded_countrie
     release_date = datetime.strptime(release_date_str, "%Y-%m-%d") if release_date_str else None
     
     # Exclusion logic by country and genre
-    for country in origin_countries:
-        if country in movie_excluded_countries:
-            excluded = movie_excluded_genres.get(country, [])
-            if excluded == ['*'] or any(genre in excluded for genre in genres):
-                return True
+#    for country in origin_countries:
+#        if country in movie_excluded_countries:
+#            excluded = movie_excluded_genres.get(country, [])
+#            if excluded == ['*'] or any(genre in excluded for genre in genres):
+#                return True
+
+    if any(genre in movie_excluded_genres for genre in genres):
+        return True
     
     # Exclusion by keyword or date
     if any(keyword in movie_keywords for keyword in excluded_keywords):
@@ -153,15 +159,23 @@ def should_exclude_movie(movie, movie_excluded_countries=movie_excluded_countrie
 # Filter criteria for TV shows
 def should_exclude_tvshow(tvshow, tv_excluded_countries=tv_excluded_countries, tv_excluded_genres=tv_excluded_genres, excluded_keywords=excluded_keywords):
     # Ensure 'origin_country' is a list or string and get the country (case insensitive)
-    origin_countries = [c.lower() for c in tvshow_details.get('origin_country', [])]
+ #   origin_countries = [c.lower() for c in tvshow.get('origin_country', [])]
     genres = [tv_genres.get(genre_id, '') for genre_id in tvshow.get('genre_ids', [])]
 
-    for country in origin_countries:
-        if country in tv_excluded_countries:
-            excluded = tv_excluded_genres.get(country, [])
-            if excluded == ['*'] or any(genre in excluded for genre in genres):
-                return True
+#    for country in origin_countries:
+#        if country in tv_excluded_countries:
+#            excluded = tv_excluded_genres.get(country, [])
+#            if excluded == ['*'] or any(genre in excluded for genre in genres):
+#                return True
+#
+#    excluded = tv_excluded_genres.get(country, [])
+#
+#    if excluded == ['*'] or any(genre in excluded for genre in genres):
+#        return True
 
+    if any(genre in tv_excluded_genres for genre in genres):
+        return True
+            
     # Fetch TV show keywords and check against the exclusion list
     tv_keywords = get_tv_keywords(tvshow['id']) if excluded_keywords else []
     if any(keyword in tv_keywords for keyword in excluded_keywords):
