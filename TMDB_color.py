@@ -26,8 +26,8 @@ headers = {
 date_str = datetime.now().strftime("%Y%m%d")
 
 # Set the number of movies and tvshows to get
-numberofmovies = 5
-numberoftvshows = 5
+numberofmovies = 10
+numberoftvshows = 10
 
 # TV Exclusion list - this filter will exclude TV shows from chosen countries that have a specific genre
 tv_excluded_countries = ['jp', 'kr', 'cn', 'in']  # ISO 3166-1 alpha-2 codes lowercas, jp, kr, us for Japan, Korea, and the US
