@@ -160,7 +160,7 @@ def should_exclude_movie(movie, movie_excluded_countries=movie_excluded_countrie
 
     # Fetch movie keywords
     movie_watch_providers = get_movie_watch_providers(movie['id'])
-    print(f"Watch providers: {movie['title']} ({movie_watch_providers})")
+    print(f"Watch providers: {movie['title']} ({movie_watch_providers.get['results'].get['GB'].get['provider_name']})")
     
     # Check release date
     release_date_str = movie.get('release_date')
