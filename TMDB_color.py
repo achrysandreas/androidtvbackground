@@ -139,12 +139,10 @@ def get_movie_watch_providers(movie_id):
     return movie_watch_providers_response.json()
 
 # Function to fetch keywords for a TV show
-#def get_tv_keywords(tv_id):
-#    keywords_url = f"{TMDB_BASE_URL}tv/{tv_id}/keywords"
-#    response = requests.get(keywords_url, headers=headers)
-#    if response.status_code == 200:
-#        return [keyword['name'].lower() for keyword in response.json().get('results', [])]
-#    return []
+def get_tv_watch_providers(tv_id):
+    watch_providers_url = f"{TMDB_BASE_URL}/tv/{tv_id}/watch/providers"
+    tv_watch_providers_response = requests.get(watch_providers_url, headers=headers)
+    return tv_watch_providers_response.json()
 
 # Filter criteria for movies
 def should_exclude_movie(movie, movie_excluded_countries=movie_excluded_countries, movie_excluded_genres=movie_excluded_genres, excluded_keywords=excluded_keywords):
@@ -221,6 +219,16 @@ def should_exclude_tvshow(tvshow, tv_excluded_countries=tv_excluded_countries, t
     if any(keyword in tv_keywords for keyword in excluded_keywords):
         return True
 
+    tv_watch_providers = get_tv_watch_providers(tvshow['id'])
+    try:
+        watch_provider = tv_watch_providers['results']['GB']['flatrate'][0]['provider_name']
+        custom_text = f"Available on {watch_provider}"
+        print(f"Watch providers: {tvshow['title']} ({watch_provider})")
+    except KeyError:
+        custom_text = ""
+        print(f"No watch providers")
+        return True
+    
     # Check last air date
     last_air_date_str = get_tv_show_details(tvshow['id']).get('last_air_date')
     if last_air_date_str:
@@ -638,6 +646,15 @@ for tvshow in trending_tvshows.get('results', []):
     rating = round(tvshow['vote_average'], 1)
     genre = ', '.join([tv_genres[genre_id] for genre_id in tvshow['genre_ids']])
 
+    # Fetch movie watch providers
+    tv_watch_providers = get_tv_watch_providers(tvshow['id'])
+    try:
+        watch_provider = tv_watch_providers['results']['GB']['flatrate'][0]['provider_name']
+        custom_text = f"Available on {watch_provider}"
+    except KeyError:
+        custom_text = ""
+        print(f"No watch providers")
+        
     # Fetch additional TV show details
     tv_details = get_tv_show_details(tvshow['id'])
     seasons = tv_details.get('number_of_seasons', 0)
