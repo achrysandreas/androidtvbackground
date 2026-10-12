@@ -443,8 +443,10 @@ def process_image(image_url, title, is_movie, genre, year, rating, duration=None
 
         draw = ImageDraw.Draw(bckg)
 
-        tmdblogo = Image.open(os.path.join(os.path.dirname(__file__), "tmdblogo.png"))
-
+        #tmdblogo = Image.open(os.path.join(os.path.dirname(__file__), "tmdblogo.png"))
+        tmdblogo = Image.open(os.path.join(os.path.dirname(__file__), "tmdblogo.png")).convert("RGBA")
+        tmdblogo.putalpha(128)
+        
         # Fonts
         font_title = ImageFont.truetype(truetype_path, size=190)
         font_overview = ImageFont.truetype(truetype_path, size=50)
@@ -454,6 +456,7 @@ def process_image(image_url, title, is_movie, genre, year, rating, duration=None
         main_color = "white"
         overview_color = "white"
         metadata_color = "grey"
+        custom_color = "(255,255,255,128)
 
         title_position = (200, 420)
         overview_position = (210, 750)    #was 730
@@ -493,7 +496,7 @@ def process_image(image_url, title, is_movie, genre, year, rating, duration=None
 
         draw.text((info_position[0] + shadow_offset, info_position[1] + shadow_offset),
                   info_text, font=font_overview, fill=shadow_color)
-        draw.text(info_position, info_text, font=font_overview, fill=overview_color)
+        draw.text(info_position, info_text, font=font_overview, fill=custom_color)
 
         # Logo (same as your old code)
         if is_movie:
