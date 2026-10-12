@@ -161,7 +161,7 @@ def should_exclude_movie(movie, movie_excluded_countries=movie_excluded_countrie
     # Fetch movie keywords
     movie_watch_providers = get_movie_watch_providers(movie['id'])
     try:
-        print(f"Watch providers: {movie['title']} ({movie_watch_providers['results']['GB']['flatrate']})")
+        print(f"Watch providers: {movie['title']} ({movie_watch_providers['results']['GB']['flatrate'][1][provider_name]})")
     except KeyError:
         print(f"No watch providers")
     
