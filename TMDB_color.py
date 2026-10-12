@@ -496,7 +496,7 @@ def process_image(image_url, title, is_movie, genre, year, rating, duration=None
 
         draw.text((info_position[0] + shadow_offset, info_position[1] + shadow_offset),
                   info_text, font=font_overview, fill=shadow_color)
-        draw.text(info_position, info_text, font=font_overview, fill=custom_color)
+        draw.text(info_position, info_text, font=font_overview, fill=metadata_color)
 
         # Logo (same as your old code)
         if is_movie:
@@ -525,9 +525,9 @@ def process_image(image_url, title, is_movie, genre, year, rating, duration=None
             draw.text(title_position, title, font=font_title, fill=main_color)
 
         # Custom text
-#        draw.text((custom_position[0] + shadow_offset, custom_position[1] + shadow_offset),
-#                  custom_text, font=font_custom, fill=shadow_color)
-#        draw.text(custom_position, custom_text, font=font_custom, fill=metadata_color)
+        draw.text((custom_position[0] + shadow_offset, custom_position[1] + shadow_offset),
+                  custom_text, font=font_custom, fill=shadow_color)
+        draw.text(custom_position, custom_text, font=font_custom, fill=custom_color)
 #
 #        bckg.paste(tmdblogo, (608, custom_position[1] + 18), tmdblogo)    #was 680, custom_position[1] + 20
 
@@ -568,7 +568,7 @@ for movie in trending_movies.get('results', []):
 
     # Check if backdrop image is available
     backdrop_path = movie['backdrop_path']
-    custom_text = "Now Trending on"
+    custom_text = "Now Trending on TMDB"
     if backdrop_path:
         # Construct image URL
         image_url = f"https://image.tmdb.org/t/p/original{backdrop_path}"
@@ -598,7 +598,7 @@ for tvshow in trending_tvshows.get('results', []):
 
     # Check if backdrop image is available
     backdrop_path = tvshow['backdrop_path']
-    custom_text = "Now Trending on"
+    custom_text = "Now Trending on TMDB"
     if backdrop_path:
         # Construct image URL
         image_url = f"https://image.tmdb.org/t/p/original{backdrop_path}"
