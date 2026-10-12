@@ -221,7 +221,7 @@ def should_exclude_tvshow(tvshow, tv_excluded_countries=tv_excluded_countries, t
 
     tv_watch_providers = get_tv_watch_providers(tvshow['id'])
     try:
-        watch_provider = tv_watch_providers['results']['GB']['flatrate'][]['provider_name']
+        watch_provider = tv_watch_providers['results']['GB']['flatrate'][0]['provider_name']
         custom_text = f"Available on {watch_provider}"
         print(f"Watch providers: {tvshow['id']} ({watch_provider})")
     except KeyError:
