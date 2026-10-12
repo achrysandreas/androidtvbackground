@@ -453,7 +453,7 @@ def process_image(image_url, title, is_movie, genre, year, rating, duration=None
         shadow_color = "black"
         main_color = "white"
         overview_color = "white"
-        metadata_color = "white"
+        metadata_color = "light grey"
 
         title_position = (200, 420)
         overview_position = (210, 750)    #was 730
