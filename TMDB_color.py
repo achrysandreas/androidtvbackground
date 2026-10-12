@@ -164,10 +164,11 @@ def should_exclude_movie(movie, movie_excluded_countries=movie_excluded_countrie
         watch_provider = movie_watch_providers['results']['GB']['flatrate'][0]['provider_name']
         custom_text = f"Available on {watch_provider}"
         print(f"Watch providers: {movie['title']} ({watch_provider})")
+        return False, custom_text
     except KeyError:
         custom_text = ""
         print(f"No watch providers")
-        return True
+        return True, custom_text
     
     # Check release date
     release_date_str = movie.get('release_date')
