@@ -466,8 +466,8 @@ def process_image(image_url, title, is_movie, genre, year, rating, duration=None
         # Fonts
         font_title = ImageFont.truetype(truetype_path, size=190)
         font_overview = ImageFont.truetype(truetype_path, size=50)
-        font_metadata = ImageFont.truetype(truetype_path2, size=50)    #was 60        
-        font_custom = ImageFont.truetype(truetype_path2, size=50)    #was 60
+        font_metadata = ImageFont.truetype(truetype_path2, size=40)    #was 60        
+        font_custom = ImageFont.truetype(truetype_path2, size=40)    #was 60
 
         shadow_color = "black"
         main_color = "white"
