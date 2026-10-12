@@ -132,6 +132,22 @@ def get_tv_keywords(tv_id):
         return [keyword['name'].lower() for keyword in response.json().get('results', [])]
     return []
 
+# Function to fetch watch providers for a movie
+def get_movie_watch_providers(movie_id):
+    watch_providers_url = f"{TMDB_BASE_URL}/movie/{movie_id}/watch/providers"
+    response = requests.get(watch_providers_url, headers=headers)
+    if response.status_code == 200:
+        # Extract and return the names of the keywords
+        return [watch_provider['GB.flatrate.provider_name'] for watch_provider in response.json().get('results', [])]
+    return []
+
+# Function to fetch keywords for a TV show
+def get_tv_keywords(tv_id):
+    keywords_url = f"{TMDB_BASE_URL}tv/{tv_id}/keywords"
+    response = requests.get(keywords_url, headers=headers)
+    if response.status_code == 200:
+        return [keyword['name'].lower() for keyword in response.json().get('results', [])]
+    return []
 
 # Filter criteria for movies
 def should_exclude_movie(movie, movie_excluded_countries=movie_excluded_countries, movie_excluded_genres=movie_excluded_genres, excluded_keywords=excluded_keywords):
@@ -144,6 +160,10 @@ def should_exclude_movie(movie, movie_excluded_countries=movie_excluded_countrie
     
     # Fetch movie keywords
     movie_keywords = get_movie_keywords(movie['id']) if excluded_keywords else []
+
+    # Fetch movie keywords
+    movie_watch_providers = get_movie_watch_providers(movie['id'])
+    print(f"Watch providers: {movie['title']} ({genres})")
     
     # Check release date
     release_date_str = movie.get('release_date')
