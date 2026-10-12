@@ -661,7 +661,7 @@ for tvshow in trending_tvshows.get('results', []):
 
     # Check if backdrop image is available
     backdrop_path = tvshow['backdrop_path']
-    custom_text = "Now Trending on TMDB"
+#    custom_text = "Now Trending on TMDB"
     if backdrop_path:
         # Construct image URL
         image_url = f"https://image.tmdb.org/t/p/original{backdrop_path}"
