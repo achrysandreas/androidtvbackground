@@ -443,9 +443,9 @@ def process_image(image_url, title, is_movie, genre, year, rating, duration=None
 
         draw = ImageDraw.Draw(bckg)
 
-        #tmdblogo = Image.open(os.path.join(os.path.dirname(__file__), "tmdblogo.png"))
-        tmdblogo = Image.open(os.path.join(os.path.dirname(__file__), "tmdblogo.png")).convert("RGBA")
-        tmdblogo.putalpha(128)
+        tmdblogo = Image.open(os.path.join(os.path.dirname(__file__), "tmdblogo.png"))
+        #tmdblogo = Image.open(os.path.join(os.path.dirname(__file__), "tmdblogo.png")).convert("RGBA")
+        #tmdblogo.putalpha(128)
         
         # Fonts
         font_title = ImageFont.truetype(truetype_path, size=190)
@@ -525,11 +525,11 @@ def process_image(image_url, title, is_movie, genre, year, rating, duration=None
             draw.text(title_position, title, font=font_title, fill=main_color)
 
         # Custom text
-        draw.text((custom_position[0] + shadow_offset, custom_position[1] + shadow_offset),
-                  custom_text, font=font_custom, fill=shadow_color)
-        draw.text(custom_position, custom_text, font=font_custom, fill=metadata_color)
-
-        bckg.paste(tmdblogo, (608, custom_position[1] + 18), tmdblogo)    #was 680, custom_position[1] + 20
+#        draw.text((custom_position[0] + shadow_offset, custom_position[1] + shadow_offset),
+#                  custom_text, font=font_custom, fill=shadow_color)
+#        draw.text(custom_position, custom_text, font=font_custom, fill=metadata_color)
+#
+#        bckg.paste(tmdblogo, (608, custom_position[1] + 18), tmdblogo)    #was 680, custom_position[1] + 20
 
         # Save
         filename = os.path.join(background_dir, f"{clean_filename(title)}.jpg")
