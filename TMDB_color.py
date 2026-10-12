@@ -164,6 +164,7 @@ def should_exclude_movie(movie, movie_excluded_countries=movie_excluded_countrie
         print(f"Watch providers: {movie['title']} ({movie_watch_providers['results']['GB']['flatrate'][0]['provider_name']})")
     except KeyError:
         print(f"No watch providers")
+        return True
     
     # Check release date
     release_date_str = movie.get('release_date')
