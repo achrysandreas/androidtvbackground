@@ -147,11 +147,11 @@ def get_tv_watch_providers(tv_id):
 # Filter criteria for movies
 def should_exclude_movie(movie, movie_excluded_countries=movie_excluded_countries, movie_excluded_genres=movie_excluded_genres, excluded_keywords=excluded_keywords):
     # Check if the movie's country is in the excluded countries list
-    origin_countries = [c.lower() for c in movie.get('origin_country', [])]
-    print(f"Origin countries: {movie['title']} ({origin_countries})")
+#    origin_countries = [c.lower() for c in movie.get('origin_country', [])]
+#    print(f"Origin countries: {movie['title']} ({origin_countries})")
     
-    genres = [movie_genres.get(genre_id, '') for genre_id in movie.get('genre_ids', [])]
-    print(f"Genres: {movie['title']} ({genres})")
+#   genres = [movie_genres.get(genre_id, '') for genre_id in movie.get('genre_ids', [])]
+#   print(f"Genres: {movie['title']} ({genres})")
     
     # Fetch movie keywords
     movie_keywords = get_movie_keywords(movie['id']) if excluded_keywords else []
@@ -178,8 +178,8 @@ def should_exclude_movie(movie, movie_excluded_countries=movie_excluded_countrie
 #            if excluded == ['*'] or any(genre in excluded for genre in genres):
 #                return True
 
-    if any(genre in movie_excluded_genres for genre in genres):
-        return True
+#    if any(genre in movie_excluded_genres for genre in genres):
+#        return True
     
     # Exclusion by keyword or date
     if any(keyword in movie_keywords for keyword in excluded_keywords):
@@ -187,9 +187,6 @@ def should_exclude_movie(movie, movie_excluded_countries=movie_excluded_countrie
     
     if release_date and release_date < max_air_date:
         return True
-
-#    if vote_average == 0:
-#        return True
         
     return False
 
@@ -198,7 +195,7 @@ def should_exclude_movie(movie, movie_excluded_countries=movie_excluded_countrie
 def should_exclude_tvshow(tvshow, tv_excluded_countries=tv_excluded_countries, tv_excluded_genres=tv_excluded_genres, excluded_keywords=excluded_keywords):
     # Ensure 'origin_country' is a list or string and get the country (case insensitive)
  #   origin_countries = [c.lower() for c in tvshow.get('origin_country', [])]
-    genres = [tv_genres.get(genre_id, '') for genre_id in tvshow.get('genre_ids', [])]
+#    genres = [tv_genres.get(genre_id, '') for genre_id in tvshow.get('genre_ids', [])]
 
 #    for country in origin_countries:
 #        if country in tv_excluded_countries:
@@ -211,8 +208,8 @@ def should_exclude_tvshow(tvshow, tv_excluded_countries=tv_excluded_countries, t
 #    if excluded == ['*'] or any(genre in excluded for genre in genres):
 #        return True
 
-    if any(genre in tv_excluded_genres for genre in genres):
-        return True
+#    if any(genre in tv_excluded_genres for genre in genres):
+#        return True
             
     # Fetch TV show keywords and check against the exclusion list
     tv_keywords = get_tv_keywords(tvshow['id']) if excluded_keywords else []
@@ -247,9 +244,6 @@ def should_exclude_tvshow(tvshow, tv_excluded_countries=tv_excluded_countries, t
     if last_air_date and last_air_date > datetime.now():
         return False
 
-#    if vote_average == 0:
-#        return True
-
     return False
 
 # Endpoint for trending shows
@@ -258,13 +252,13 @@ def should_exclude_tvshow(tvshow, tv_excluded_countries=tv_excluded_countries, t
 
 # Discover URLs
 tmdb_date = datetime.now().strftime("%Y-%m-%d")
-trending_movies_url = f'{TMDB_BASE_URL}/discover/movie?without_genres=27|99&with_release_type=4|3&release_date.lte={date_str}&release_date.gte={max_air_date}&with_origin_country=US|GB&certification.lte=15&certification_country=GB&include_adult=false&include_video=false&language=en-US&region=GB&sort_by=primary_release_date.desc&vote_average.gte=5&vote_count.gte=10&watch_region=GB'
-trending_tvshows_url = f'{TMDB_BASE_URL}/discover/tv?without_genres=10766|10763|10767|10768|99&with_type=4|3&first_air_date.lte={date_str}&first_air_date.gte={max_air_date}&with_origin_country=US|GB&certification.lte=15&certification_country=GB&include_adult=false&include_video=false&language=en-US&region=GB&sort_by=first_air_date.desc&vote_average.gte=5&vote_count.gte=10&watch_region=GB'
+trending_movies_url = f'{TMDB_BASE_URL}/discover/movie?without_genres=27|99&with_release_type=4|3&release_date.lte={date_str}&release_date.gte={max_air_date}&with_origin_country=US|GB&certification.lte=15&certification_country=GB&include_adult=false&include_video=false&language=en-US&region=GB&sort_by=primary_release_date.desc&vote_average.gte=6&vote_count.gte=10&watch_region=GB'
+trending_tvshows_url = f'{TMDB_BASE_URL}/discover/tv?without_genres=10766|10763|10767|10768|99&with_type=4|3&first_air_date.lte={date_str}&first_air_date.gte={max_air_date}&with_origin_country=US|GB&certification.lte=15&certification_country=GB&include_adult=false&include_video=false&language=en-US&region=GB&sort_by=first_air_date.desc&vote_average.gte=6&vote_count.gte=10&watch_region=GB'
 
 # Fetch more than required to allow filtering
 initial_fetch_count = numberofmovies + 10  # Fetch 15 to get at least 5 valid ones
 #trending_movies_url = f'{TMDB_BASE_URL}/trending/movie/week?language={LANGUAGE}'
-trending_movies_url = f'{TMDB_BASE_URL}/discover/movie?without_genres=27|99&with_release_type=4|3&release_date.lte={date_str}&release_date.gte={max_air_date}&with_origin_country=US|GB&certification.lte=15&certification_country=GB&include_adult=false&include_video=false&language=en-US&region=GB&sort_by=primary_release_date.desc&vote_average.gte=5&vote_count.gte=10&watch_region=GB'
+trending_movies_url = f'{TMDB_BASE_URL}/discover/movie?without_genres=27|99&with_release_type=4|3&release_date.lte={date_str}&release_date.gte={max_air_date}&with_origin_country=US|GB&certification.lte=15&certification_country=GB&include_adult=false&include_video=false&language=en-US&region=GB&sort_by=primary_release_date.desc&vote_average.gte=6&vote_count.gte=10&watch_region=GB'
 trending_movies_response = requests.get(trending_movies_url, headers=headers)
 all_movies = trending_movies_response.json().get('results', [])[:initial_fetch_count]
 
@@ -285,7 +279,7 @@ trending_movies = {'results': valid_movies}
 # Fetching trending TV shows
 initial_fetch_count = numberoftvshows + 10  # Fetch more than needed
 #trending_tvshows_url = f'{TMDB_BASE_URL}/trending/tv/week?language={LANGUAGE}'
-trending_tvshows_url = f'{TMDB_BASE_URL}/discover/tv?without_genres=10766|10763|10767|10768|99&with_type=4|3&first_air_date.lte={date_str}&first_air_date.gte={max_air_date}&with_origin_country=US|GB&certification.lte=15&certification_country=GB&include_adult=false&include_video=false&language=en-US&region=GB&sort_by=first_air_date.desc&vote_average.gte=5&vote_count.gte=10&watch_region=GB'
+trending_tvshows_url = f'{TMDB_BASE_URL}/discover/tv?without_genres=10766|10763|10767|10768|99&with_type=4|3&first_air_date.lte={date_str}&first_air_date.gte={max_air_date}&with_origin_country=US|GB&certification.lte=15&certification_country=GB&include_adult=false&include_video=false&language=en-US&region=GB&sort_by=first_air_date.desc&vote_average.gte=6&vote_count.gte=10&watch_region=GB'
 trending_tvshows_response = requests.get(trending_tvshows_url, headers=headers)
 all_tvshows = trending_tvshows_response.json().get('results', [])[:initial_fetch_count]
 
@@ -623,7 +617,7 @@ for movie in trending_movies.get('results', []):
 
     # Check if backdrop image is available
     backdrop_path = movie['backdrop_path']
-#    custom_text = f"Available on {watch_provider}"
+#    custom_text = "Now Trending on TMDB"
     if backdrop_path:
         # Construct image URL
         image_url = f"https://image.tmdb.org/t/p/original{backdrop_path}"
