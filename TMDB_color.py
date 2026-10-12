@@ -136,10 +136,7 @@ def get_tv_keywords(tv_id):
 def get_movie_watch_providers(movie_id):
     watch_providers_url = f"{TMDB_BASE_URL}/movie/{movie_id}/watch/providers"
     response = requests.get(watch_providers_url, headers=headers)
-    if response.status_code == 200:
-        # Extract and return the names of the keywords
-        return [watch_provider['provider_name'] for GB in response.json().get('results', [])]
-    return []
+    return movie_details_response.json()
 
 # Function to fetch keywords for a TV show
 #def get_tv_keywords(tv_id):
