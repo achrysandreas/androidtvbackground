@@ -75,6 +75,22 @@ if not os.path.exists(truetype_path):
     except Exception as e:
         print(f"An error occurred while downloading the Roboto-Light font: {e}")
 
+# Save font locally
+truetype_url2 = 'https://github.com/googlefonts/roboto/raw/main/src/hinted/Roboto-Thin.ttf'
+truetype_path2 = 'Roboto-Thin.ttf'
+if not os.path.exists(truetype_path2):
+    try:
+        response = requests.get(truetype_url2, timeout=10)
+        if response.status_code == 200:
+            with open(truetype_path2, 'wb') as f:
+                f.write(response.content)
+            print("Roboto-Thin font saved")
+        else:
+            print(f"Failed to download Roboto-Thin font. Status code: {response.status_code}")
+    except Exception as e:
+        print(f"An error occurred while downloading the Roboto-Thin font: {e}")
+        
+
 # Fetching genres for movies
 genres_url = f'{TMDB_BASE_URL}/genre/movie/list?language={LANGUAGE}'
 genres_response = requests.get(genres_url, headers=headers)
@@ -450,13 +466,14 @@ def process_image(image_url, title, is_movie, genre, year, rating, duration=None
         # Fonts
         font_title = ImageFont.truetype(truetype_path, size=190)
         font_overview = ImageFont.truetype(truetype_path, size=50)
-        font_custom = ImageFont.truetype(truetype_path, size=50)    #was 60
+        font_metadata = ImageFont.truetype(truetype_path2, size=50)    #was 60        
+        font_custom = ImageFont.truetype(truetype_path2, size=50)    #was 60
 
         shadow_color = "black"
         main_color = "white"
         overview_color = "white"
-        metadata_color = "grey"
-        custom_color = "grey"
+        metadata_color = "white"
+        custom_color = "white"
 
         title_position = (200, 420)
         overview_position = (210, 750)    #was 730
@@ -495,8 +512,8 @@ def process_image(image_url, title, is_movie, genre, year, rating, duration=None
         info_text = f"{genre_text}  •  {year_text}  •  {additional_info}  •  {rating_text}"
 
         draw.text((info_position[0] + shadow_offset, info_position[1] + shadow_offset),
-                  info_text, font=font_overview, fill=shadow_color)
-        draw.text(info_position, info_text, font=font_overview, fill=metadata_color)
+                  info_text, font=font_metadata, fill=shadow_color)
+        draw.text(info_position, info_text, font=font_metadata, fill=metadata_color)
 
         # Logo (same as your old code)
         if is_movie:
