@@ -158,17 +158,16 @@ def should_exclude_movie(movie, movie_excluded_countries=movie_excluded_countrie
     # Fetch movie keywords
     movie_keywords = get_movie_keywords(movie['id']) if excluded_keywords else []
 
-    # Fetch movie keywords
+    # Fetch movie watch providers
     movie_watch_providers = get_movie_watch_providers(movie['id'])
     try:
         watch_provider = movie_watch_providers['results']['GB']['flatrate'][0]['provider_name']
         custom_text = f"Available on {watch_provider}"
         print(f"Watch providers: {movie['title']} ({watch_provider})")
-        return False, custom_text
     except KeyError:
         custom_text = ""
         print(f"No watch providers")
-        return True, custom_text
+        return True
     
     # Check release date
     release_date_str = movie.get('release_date')
@@ -343,9 +342,6 @@ def resize_logo(image, width, height):
     return resized_img
 
 
-
-
-
 def vignette_side(h, w, fade_ratio=5, fade_power=5.0, position="bottom-left", offset_left=0, offset_bottom=0):
     """
     Create a vignette mask for the given position.
@@ -486,7 +482,6 @@ def process_image(image_url, title, is_movie, genre, year, rating, duration=None
 
         tmdblogo = Image.open(os.path.join(os.path.dirname(__file__), "tmdblogo.png"))
         #tmdblogo = Image.open(os.path.join(os.path.dirname(__file__), "tmdblogo.png")).convert("RGBA")
-        #tmdblogo.putalpha(128)
         
         # Fonts
         font_title = ImageFont.truetype(truetype_path, size=190)
@@ -595,6 +590,15 @@ for movie in trending_movies.get('results', []):
     year = movie['release_date']
     rating = round(movie['vote_average'], 1)
     genre = ', '.join([movie_genres[genre_id] for genre_id in movie['genre_ids']])
+
+    # Fetch movie watch providers
+    movie_watch_providers = get_movie_watch_providers(movie['id'])
+    try:
+        watch_provider = movie_watch_providers['results']['GB']['flatrate'][0]['provider_name']
+        custom_text = f"Available on {watch_provider}"
+    except KeyError:
+        custom_text = ""
+        print(f"No watch providers")
 
     # Fetch additional movie details
     movie_details = get_movie_details(movie['id'])
