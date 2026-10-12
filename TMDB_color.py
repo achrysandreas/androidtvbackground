@@ -650,10 +650,10 @@ for tvshow in trending_tvshows.get('results', []):
     tv_watch_providers = get_tv_watch_providers(tvshow['id'])
     try:
         watch_provider = tv_watch_providers['results']['GB']['flatrate'][0]['provider_name']
-        custom_text = f"Available on {watch_provider}"
+        custom_text = f"BBB Available on {watch_provider}"
     except KeyError:
         custom_text = ""
-        print(f"No watch providers")
+        print(f"BBB No watch providers")
         
     # Fetch additional TV show details
     tv_details = get_tv_show_details(tvshow['id'])
