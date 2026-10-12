@@ -76,19 +76,19 @@ if not os.path.exists(truetype_path):
         print(f"An error occurred while downloading the Roboto-Regular font: {e}")
 
 # Save font locally
-truetype_url2 = 'https://github.com/googlefonts/roboto/raw/main/src/hinted/RobotoCondensed-Light.ttf'
-truetype_path2 = 'RobotoCondensed-Light.ttf'
+truetype_url2 = 'https://github.com/googlefonts/roboto/raw/main/src/hinted/Roboto-Thin.ttf'
+truetype_path2 = 'Roboto-Thin.ttf'
 if not os.path.exists(truetype_path2):
     try:
         response = requests.get(truetype_url2, timeout=10)
         if response.status_code == 200:
             with open(truetype_path2, 'wb') as f:
                 f.write(response.content)
-            print("RobotoCondensed-Light font saved")
+            print("Roboto-Thin font saved")
         else:
-            print(f"Failed to download RobotoCondensed-Light font. Status code: {response.status_code}")
+            print(f"Failed to download Roboto-Thin font. Status code: {response.status_code}")
     except Exception as e:
-        print(f"An error occurred while downloading the RobotoCondensed-Light font: {e}")
+        print(f"An error occurred while downloading the Roboto-Thin font: {e}")
         
 
 # Fetching genres for movies
