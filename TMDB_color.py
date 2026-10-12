@@ -252,8 +252,8 @@ def should_exclude_tvshow(tvshow, tv_excluded_countries=tv_excluded_countries, t
 
 # Discover URLs
 tmdb_date = datetime.now().strftime("%Y-%m-%d")
-trending_movies_url = f'{TMDB_BASE_URL}/discover/movie?without_genres=27|99&release_date.lte={date_str}&with_origin_country=US|GB&certification.lte=15&certification_country=GB&include_adult=false&include_video=false&language=en-US&region=GB&sort_by=primary_release_date.desc&vote_average.gte=6&vote_count.gte=10&watch_region=GB'
-trending_tvshows_url = f'{TMDB_BASE_URL}/discover/tv?without_genres=10766|10763|10767|10768|99&first_air_date.lte={date_str}&with_origin_country=US|GB&certification.lte=15&certification_country=GB&include_adult=false&include_video=false&language=en-US&region=GB&sort_by=first_air_date.desc&vote_average.gte=6&vote_count.gte=10&watch_region=GB'
+trending_movies_url = f'{TMDB_BASE_URL}/discover/movie?without_genres=27|99&release_date.gte={max_air_date}&with_origin_country=US|GB&certification.lte=15&certification_country=GB&include_adult=false&include_video=false&language=en-US&region=GB&sort_by=primary_release_date.desc&vote_average.gte=6&vote_count.gte=10&watch_region=GB'
+trending_tvshows_url = f'{TMDB_BASE_URL}/discover/tv?without_genres=10766|10763|10767|10768|99&first_air_date.gte={max_air_date}&with_origin_country=US|GB&certification.lte=15&certification_country=GB&include_adult=false&include_video=false&language=en-US&region=GB&sort_by=first_air_date.desc&vote_average.gte=6&vote_count.gte=10&watch_region=GB'
 
 # Fetch more than required to allow filtering
 initial_fetch_count = numberofmovies + 10  # Fetch 15 to get at least 5 valid ones
