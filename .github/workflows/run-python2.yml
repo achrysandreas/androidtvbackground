@@ -29,7 +29,7 @@ jobs:
         env:
           TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
           TMDB_LANGUAGE: "en-US"
-        run: python TMDB_color.py
+        run: python TMDB_color2.py
 
       - name: Commit and Push Wallpapers
         run: |
@@ -37,10 +37,10 @@ jobs:
           git config --global user.email "41898282+github-actions[bot]@://github.com"
           
           # 🌟 FORCE Git to stage the actual folder the script is using
-          git add -f tmdb_backgrounds/
+          git add -f tmdb_backgrounds2/
           
           if git diff --staged --quiet; then
-            echo "No new images or changes were detected in tmdb_backgrounds/."
+            echo "No new images or changes were detected in tmdb_backgrounds2/."
           else
             git commit -m "Automated TV Background Refresh [skip ci]"
             git push origin main
