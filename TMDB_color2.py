@@ -390,8 +390,8 @@ def vignette_side(h, w, fade_ratio=5, fade_power=5.0, position="bottom-left", of
     offset_left / offset_bottom allow shifting the start of the fade inward in pixels.
     """
     y, x = np.ogrid[0:h, 0:w]
-#    rx, ry = w * fade_ratio, h * fade_ratio
-    rx, ry = w * 0.1, h * fade_ratio
+    rx, ry = w * fade_ratio, h * fade_ratio
+#    rx, ry = w * 0.1, h * fade_ratio
 
     dist_x, dist_y = np.ones_like(x, dtype=np.float32), np.ones_like(y, dtype=np.float32)
 
@@ -457,7 +457,7 @@ def generate_background_fast(input_img, target_width=3840):
     h, w = img_resized.height, img_resized.width
     mask = vignette_side(
         h, w,
-        fade_ratio=0.5,
+        fade_ratio=0.75,
         fade_power=2.5,
         position="bottom-left",
         offset_left=0,
