@@ -61,8 +61,10 @@ excluded_keywords = []  # like ['adult']
 max_air_date = datetime.now() - timedelta(days=90)  # specify the number of days since the movie release or the TV show last air date, shows before this date will be excluded
 
 # Save font locally
-truetype_url = 'https://github.com/googlefonts/roboto/raw/main/src/hinted/Roboto-Regular.ttf'
-truetype_path = 'Roboto-Regular.ttf'
+#truetype_url = 'https://github.com/googlefonts/roboto/raw/main/src/hinted/Roboto-Regular.ttf'
+#truetype_path = 'Roboto-Regular.ttf'
+truetype_url = 'https://github.com/googlefonts/Montserrat/fonts/ttf/Montserrat-Regular.ttf'
+truetype_path = 'Montserrat-Regular.ttf'
 if not os.path.exists(truetype_path):
     try:
         response = requests.get(truetype_url, timeout=10)
@@ -76,8 +78,11 @@ if not os.path.exists(truetype_path):
         print(f"An error occurred while downloading the Roboto-Regular font: {e}")
 
 # Save font locally
-truetype_url2 = 'https://github.com/googlefonts/roboto/raw/main/src/hinted/Roboto-Light.ttf'
-truetype_path2 = 'Roboto-Light.ttf'
+#truetype_url2 = 'https://github.com/googlefonts/roboto/raw/main/src/hinted/Roboto-Light.ttf'
+#truetype_path2 = 'Roboto-Light.ttf'
+truetype_url = 'https://github.com/googlefonts/Montserrat/fonts/ttf/Montserrat-Light.ttf'
+truetype_path = 'Montserrat-Light.ttf'
+
 if not os.path.exists(truetype_path2):
     try:
         response = requests.get(truetype_url2, timeout=10)
