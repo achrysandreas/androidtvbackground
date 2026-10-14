@@ -538,10 +538,10 @@ def process_image(image_url, title, is_movie, genre, year, rating, duration=None
         metadata_color = "white"
         custom_color = "white"
 
-        title_position = (200, 520)
-        overview_position = (210, 850)    #was 730
+        title_position = (200, 820)
+        overview_position = (210, 1150)    #was 730
         shadow_offset = 1
-        info_position = (210, 760)    #was 650
+        info_position = (210, 1060)    #was 650
 
         # Wrap overview
         wrapped_overview = "\n".join(textwrap.wrap(overview, width=65, max_lines=3, placeholder=" ..."))
