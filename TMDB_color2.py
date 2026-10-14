@@ -61,34 +61,34 @@ excluded_keywords = []  # like ['adult']
 max_air_date = datetime.now() - timedelta(days=90)  # specify the number of days since the movie release or the TV show last air date, shows before this date will be excluded
 
 # Save font locally
-truetype_url = 'https://github.com/googlefonts/roboto/raw/main/src/hinted/Roboto-Regular.ttf'
-truetype_path = 'Roboto-Regular.ttf'
+truetype_url = 'https://github.com/googlefonts/roboto/raw/main/src/hinted/Roboto-Medium.ttf'
+truetype_path = 'Roboto-Medium.ttf'
 if not os.path.exists(truetype_path):
     try:
         response = requests.get(truetype_url, timeout=10)
         if response.status_code == 200:
             with open(truetype_path, 'wb') as f:
                 f.write(response.content)
-            print("Roboto-Regular font saved")
+            print("Roboto-Medium font saved")
         else:
-            print(f"Failed to download Roboto-Regular font. Status code: {response.status_code}")
+            print(f"Failed to download Roboto-Medium font. Status code: {response.status_code}")
     except Exception as e:
-        print(f"An error occurred while downloading the Roboto-Regular font: {e}")
+        print(f"An error occurred while downloading the Roboto-Medium font: {e}")
 
 # Save font locally
-truetype_url2 = 'https://github.com/googlefonts/roboto/raw/main/src/hinted/RobotoCondensed-Regular.ttf'
-truetype_path2 = 'RobotoCondensed-Regular.ttf'
+truetype_url2 = 'https://github.com/googlefonts/roboto/raw/main/src/hinted/Roboto-Light.ttf'
+truetype_path2 = 'Roboto-Light.ttf'
 if not os.path.exists(truetype_path2):
     try:
         response = requests.get(truetype_url2, timeout=10)
         if response.status_code == 200:
             with open(truetype_path2, 'wb') as f:
                 f.write(response.content)
-            print("RobotoCondensed-Regular font saved")
+            print("Roboto-Light font saved")
         else:
             print(f"Failed to download Roboto-Thin font. Status code: {response.status_code}")
     except Exception as e:
-        print(f"An error occurred while downloading the RobotoCondensed-Regular font: {e}")
+        print(f"An error occurred while downloading the Roboto-Light font: {e}")
         
 
 # Fetching genres for movies
@@ -535,8 +535,8 @@ def process_image(image_url, title, is_movie, genre, year, rating, duration=None
         shadow_color = "black"
         main_color = "white"
         overview_color = "white"
-        metadata_color = "lightslategrey"
-        custom_color = "lightslategrey"
+        metadata_color = "white"
+        custom_color = "white"
 
         title_position = (200, 720)
         overview_position = (210, 1050)    #was 730
