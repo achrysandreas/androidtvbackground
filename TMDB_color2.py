@@ -80,8 +80,8 @@ if not os.path.exists(truetype_path):
 # Save font locally
 #truetype_url2 = 'https://github.com/googlefonts/roboto/raw/main/src/hinted/Roboto-Light.ttf'
 #truetype_path2 = 'Roboto-Light.ttf'
-truetype_url = 'https://github.com/googlefonts/Montserrat/fonts/ttf/Montserrat-Light.ttf'
-truetype_path = 'Montserrat-Light.ttf'
+truetype_url2 = 'https://github.com/googlefonts/Montserrat/fonts/ttf/Montserrat-Light.ttf'
+truetype_path2 = 'Montserrat-Light.ttf'
 
 if not os.path.exists(truetype_path2):
     try:
