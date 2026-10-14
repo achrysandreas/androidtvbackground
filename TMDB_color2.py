@@ -436,7 +436,7 @@ def create_blurry_background(image, size=(3840, 2160), blur_radius=800, dither_s
     
     return bg_img, is_uniform
 
-def generate_background_fast(input_img, target_width=2700):
+def generate_background_fast(input_img, target_width=3840):
     # Step 1: Create blurry/dark canvas
     canvas_rgb, is_uniform = create_blurry_background(input_img, size=(3840, 2160), blur_radius=800)
 
