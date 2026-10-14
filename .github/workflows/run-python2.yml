@@ -1,0 +1,47 @@
+name: Generate TMDB Backgrounds 2
+
+on:
+  schedule:
+    # Runs automatically every Sat at midnight UTC
+    - cron: '0 0 * * 6'
+  workflow_dispatch: # Allows manual execution
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Allows pushing changes back to the repo
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Run TMDB Color Script
+        env:
+          TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
+          TMDB_LANGUAGE: "en-US"
+        run: python TMDB_color.py
+
+      - name: Commit and Push Wallpapers
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@://github.com"
+          
+          # 🌟 FORCE Git to stage the actual folder the script is using
+          git add -f tmdb_backgrounds/
+          
+          if git diff --staged --quiet; then
+            echo "No new images or changes were detected in tmdb_backgrounds/."
+          else
+            git commit -m "Automated TV Background Refresh [skip ci]"
+            git push origin main
+          fi
