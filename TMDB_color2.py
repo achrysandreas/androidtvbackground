@@ -63,7 +63,7 @@ max_air_date = datetime.now() - timedelta(days=90)  # specify the number of days
 # Save font locally
 #truetype_url = 'https://github.com/googlefonts/roboto/raw/main/src/hinted/Roboto-Regular.ttf'
 #truetype_path = 'Roboto-Regular.ttf'
-truetype_url = 'https://github.com/googlefonts/Montserrat/fonts/ttf/Montserrat-Regular.ttf'
+truetype_url = 'https://github.com/googlefonts/Montserrat/raw/refs/heads/master/fonts/ttf/Montserrat-Regular.ttf'
 truetype_path = 'Montserrat-Regular.ttf'
 if not os.path.exists(truetype_path):
     try:
@@ -80,7 +80,7 @@ if not os.path.exists(truetype_path):
 # Save font locally
 #truetype_url2 = 'https://github.com/googlefonts/roboto/raw/main/src/hinted/Roboto-Light.ttf'
 #truetype_path2 = 'Roboto-Light.ttf'
-truetype_url2 = 'https://github.com/googlefonts/Montserrat/fonts/ttf/Montserrat-Light.ttf'
+truetype_url2 = 'https://github.com/googlefonts/Montserrat/raw/refs/heads/master/fonts/ttf/Montserrat-Light.ttf'
 truetype_path2 = 'Montserrat-Light.ttf'
 
 if not os.path.exists(truetype_path2):
