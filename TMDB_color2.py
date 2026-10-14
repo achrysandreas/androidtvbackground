@@ -460,7 +460,7 @@ def generate_background_fast(input_img, target_width=3840):
         fade_ratio=0.5,
         fade_power=2.5,
         position="bottom-left",
-        offset_left=0-w,
+        offset_left=0-w/2,
         offset_bottom=h/5    #150
     )
     mask = mask.filter(ImageFilter.GaussianBlur(radius=60))
@@ -539,7 +539,7 @@ def process_image(image_url, title, is_movie, genre, year, rating, duration=None
         custom_color = "white"
 
         title_position = (200, 720)
-        overview_position = (210, 1050)    #was 730
+        overview_position = (210, 1045)    #was 730
         shadow_offset = 1
         info_position = (210, 960)    #was 650
 
