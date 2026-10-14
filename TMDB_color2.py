@@ -61,19 +61,19 @@ excluded_keywords = []  # like ['adult']
 max_air_date = datetime.now() - timedelta(days=90)  # specify the number of days since the movie release or the TV show last air date, shows before this date will be excluded
 
 # Save font locally
-truetype_url = 'https://github.com/googlefonts/roboto/raw/main/src/hinted/Roboto-Medium.ttf'
-truetype_path = 'Roboto-Medium.ttf'
+truetype_url = 'https://github.com/googlefonts/roboto/raw/main/src/hinted/Roboto-Regular.ttf'
+truetype_path = 'Roboto-Regular.ttf'
 if not os.path.exists(truetype_path):
     try:
         response = requests.get(truetype_url, timeout=10)
         if response.status_code == 200:
             with open(truetype_path, 'wb') as f:
                 f.write(response.content)
-            print("Roboto-Medium font saved")
+            print("Roboto-Regular font saved")
         else:
-            print(f"Failed to download Roboto-Medium font. Status code: {response.status_code}")
+            print(f"Failed to download Roboto-Regular font. Status code: {response.status_code}")
     except Exception as e:
-        print(f"An error occurred while downloading the Roboto-Medium font: {e}")
+        print(f"An error occurred while downloading the Roboto-Regular font: {e}")
 
 # Save font locally
 truetype_url2 = 'https://github.com/googlefonts/roboto/raw/main/src/hinted/Roboto-Light.ttf'
@@ -529,8 +529,8 @@ def process_image(image_url, title, is_movie, genre, year, rating, duration=None
         # Fonts
         font_title = ImageFont.truetype(truetype_path, size=190)
         font_overview = ImageFont.truetype(truetype_path, size=50)
-        font_metadata = ImageFont.truetype(truetype_path2, size=50)    #was 60        
-        font_custom = ImageFont.truetype(truetype_path2, size=50)    #was 60
+        font_metadata = ImageFont.truetype(truetype_path2, size=40)    #was 60        
+        font_custom = ImageFont.truetype(truetype_path2, size=40)    #was 60
 
         shadow_color = "black"
         main_color = "white"
