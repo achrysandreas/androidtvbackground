@@ -139,42 +139,42 @@ def get_movie_watch_providers(movie_id):
     return movie_watch_providers_response.json()
 
 ######
-
-def get_movie_watch_providers(movie_id):
-
-    TARGET_REGION = "GB"
-    
-    watch_providers_url = f"{TMDB_BASE_URL}/movie/{movie_id}/watch/providers"
-    response = requests.get(watch_providers_url, headers=headers)
-    
-    if response.status_code == 200:
-        data = response.json()
-        regional_data = data.get("results", {}).get(TARGET_REGION, {})
-        
-        # List fields we want to check (like categories of streaming/buying)
-        categories = ["flatrate", "free"]    # ["flatrate", "buy", "rent", "free"]
-        
-        # Deep nested wildcard extraction:
-        # 1. Loop through each category key in our list
-        # 2. Grab the array of providers inside it safely (default to empty list if missing)
-        # 3. Extract the provider name from every single item found
-        all_provider_names = [
-            provider["provider_name"]
-            for category in categories
-            for provider in regional_data.get(category, [])
-        ]
-        
-        # Remove duplicates since a platform like Apple TV can be under both 'rent' and 'buy'
-        unique_providers = list(set(all_provider_names))
-    
-        return unique_providers
-        
-    #    print(f"--- All Available Platforms in {TARGET_REGION} ---")
-    #    for name in unique_providers:
-    #        print(f"- {name}")
-    else:
-        print(f"Error fetching data: {response.status_code}")
-
+#
+#def get_movie_watch_providers(movie_id):
+#
+#    TARGET_REGION = "GB"
+#    
+#    watch_providers_url = f"{TMDB_BASE_URL}/movie/{movie_id}/watch/providers"
+#    response = requests.get(watch_providers_url, headers=headers)
+#    
+#    if response.status_code == 200:
+#        data = response.json()
+#        regional_data = data.get("results", {}).get(TARGET_REGION, {})
+#        
+#        # List fields we want to check (like categories of streaming/buying)
+#        categories = ["flatrate", "free"]    # ["flatrate", "buy", "rent", "free"]
+#        
+#        # Deep nested wildcard extraction:
+#        # 1. Loop through each category key in our list
+#        # 2. Grab the array of providers inside it safely (default to empty list if missing)
+#        # 3. Extract the provider name from every single item found
+#        all_provider_names = [
+#            provider["provider_name"]
+#            for category in categories
+#            for provider in regional_data.get(category, [])
+#        ]
+#        
+#        # Remove duplicates since a platform like Apple TV can be under both 'rent' and 'buy'
+#        unique_providers = list(set(all_provider_names))
+#    
+#        return unique_providers
+#        
+#    #    print(f"--- All Available Platforms in {TARGET_REGION} ---")
+#    #    for name in unique_providers:
+#    #        print(f"- {name}")
+#    else:
+#        print(f"Error fetching data: {response.status_code}")
+#
 ######
 
 # Function to fetch keywords for a TV show
@@ -195,17 +195,16 @@ def should_exclude_movie(movie, movie_excluded_countries=movie_excluded_countrie
     # Fetch movie keywords
     movie_keywords = get_movie_keywords(movie['id']) if excluded_keywords else []
 
-    ### No watch providers check REINSTATE
     # Fetch movie watch providers
-#    movie_watch_providers = get_movie_watch_providers(movie['id'])
-#    try:
-#        watch_provider = movie_watch_providers['results']['GB']['flatrate'][0]['provider_name']
-#        custom_text = f"Available on {watch_provider}"
-#        print(f"Watch providers: {movie['title']} ({watch_provider})")
-#    except KeyError:
-#        custom_text = ""
-#        print(f"No watch providers for movie {movie['id']}")
-#        return True
+    movie_watch_providers = get_movie_watch_providers(movie['id'])
+    try:
+        watch_provider = movie_watch_providers['results']['GB']['flatrate'][0]['provider_name']
+        custom_text = f"Available on {watch_provider}"
+        print(f"Watch providers: {movie['title']} ({watch_provider})")
+    except KeyError:
+        custom_text = ""
+        print(f"No watch providers for movie {movie['id']}")
+        return True
     
     # Check release date
     release_date_str = movie.get('release_date')
@@ -634,18 +633,18 @@ for movie in trending_movies.get('results', []):
     rating = round(movie['vote_average'], 1)
     genre = ', '.join([movie_genres[genre_id] for genre_id in movie['genre_ids']])
 
-#    # Fetch movie watch providers
-#    movie_watch_providers = get_movie_watch_providers(movie['id'])
-#    try:
-#        watch_provider = movie_watch_providers['results']['GB']['flatrate'][0]['provider_name']
-#        custom_text = f"Available on {watch_provider}"
-#    except KeyError:
-#        custom_text = ""
-#        print(f"No watch providers")
-
+    # Fetch movie watch providers
     movie_watch_providers = get_movie_watch_providers(movie['id'])
-    watch_provider = ', '.join(name for name in movie_watch_providers)
-    custom_text = f"Available on {watch_provider}"
+    try:
+        watch_provider = movie_watch_providers['results']['GB']['flatrate'][0]['provider_name']
+        custom_text = f"Available on {watch_provider}"
+    except KeyError:
+        custom_text = ""
+        print(f"No watch providers")
+
+#    movie_watch_providers = get_movie_watch_providers(movie['id'])
+#    watch_provider = ', '.join(name for name in movie_watch_providers)
+#    custom_text = f"Available on {watch_provider}"
 #    for name in movie_watch_providers:
 #        watch_provider = (f"Available- {name}")
     
