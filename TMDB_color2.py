@@ -527,10 +527,10 @@ def process_image(image_url, title, is_movie, genre, year, rating, duration=None
         #tmdblogo = Image.open(os.path.join(os.path.dirname(__file__), "tmdblogo.png")).convert("RGBA")
         
         # Fonts
-        font_title = ImageFont.truetype(truetype_path, size=190)
-        font_overview = ImageFont.truetype(truetype_path, size=50)
-        font_metadata = ImageFont.truetype(truetype_path2, size=40)    #was 60        
-        font_custom = ImageFont.truetype(truetype_path2, size=40)    #was 60
+        font_title = ImageFont.truetype(truetype_path, size=192)    #190
+        font_overview = ImageFont.truetype(truetype_path, size=56)    #50
+        font_metadata = ImageFont.truetype(truetype_path2, size=44)    #60        
+        font_custom = ImageFont.truetype(truetype_path2, size=44)    #40
 
         shadow_color = "black"
         main_color = "white"
@@ -541,7 +541,7 @@ def process_image(image_url, title, is_movie, genre, year, rating, duration=None
         title_position = (200, 720)
         overview_position = (210, 1040)    #was 730
         shadow_offset = 1
-        info_position = (210, 965)    #was 650
+        info_position = (210, 960)    #was 650
 
         # Wrap overview
         wrapped_overview = "\n".join(textwrap.wrap(overview, width=65, max_lines=3, placeholder=" ..."))
@@ -554,7 +554,7 @@ def process_image(image_url, title, is_movie, genre, year, rating, duration=None
         # Total height of wrapped summary
         summary_height = line_height * len(lines)
 
-        custom_position =  (210, overview_position[1] + summary_height + 100)
+        custom_position =  (210, overview_position[1] + summary_height + 96)
 
 
         # Overview
@@ -592,7 +592,7 @@ def process_image(image_url, title, is_movie, genre, year, rating, duration=None
                 try:
                     logo_image = Image.open(BytesIO(logo_response.content))
                     logo_image = resize_logo(logo_image, 1000, 500)
-                    logo_position = (210, info_position[1] - logo_image.height - 25)
+                    logo_position = (210, info_position[1] - logo_image.height - 24)
                     logo_image = logo_image.convert('RGBA')
                     bckg.paste(logo_image, logo_position, logo_image)
                     logo_drawn = True
