@@ -775,14 +775,23 @@ for tvshow in trending_tvshows.get('results', []):
     genre = ', '.join([tv_genres[genre_id] for genre_id in tvshow['genre_ids']])
 
     # Fetch movie watch providers
-    tv_watch_providers = get_tv_watch_providers_loop(tvshow['id'])
-    try:
-        watch_provider = tv_watch_providers['results']['GB']['flatrate'][0]['provider_name']
-        custom_text = f"Available on {watch_provider}"
-    except KeyError:
+#    tv_watch_providers = get_tv_watch_providers_loop(tvshow['id'])
+#    try:
+#        watch_provider = tv_watch_providers['results']['GB']['flatrate'][0]['provider_name']
+#        custom_text = f"Available on {watch_provider}"
+#    except KeyError:
+#        custom_text = ""
+#        print(f"BBB No watch providers - {title}")
+
+    # Fetch tv watch providers
+    tv_watch_providers = ', '.join(watch_provider for watch_provider in get_tv_watch_providers_loop(tvshow['id']))
+    if tv_watch_providers:
+        custom_text = f"Available on {tv_watch_providers}"
+        print(f"Process tv show: Watch providers: {tvshow['id']} ({tv_watch_providers})")
+    else:
         custom_text = ""
-        print(f"BBB No watch providers - {title}")
-        
+        print(f"Process tv show: No watch providers for tv show {tvshow['id']}")
+
     # Fetch additional TV show details
     tv_details = get_tv_show_details(tvshow['id'])
     seasons = tv_details.get('number_of_seasons', 0)
