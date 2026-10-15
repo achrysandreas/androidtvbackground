@@ -7,7 +7,6 @@ from io import BytesIO
 import os
 import shutil
 import textwrap
-from fuzzywuzzy import fuzz, process
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
 load_dotenv(verbose=True)
@@ -32,28 +31,11 @@ numberoftvshows = 10
 
 # TV Exclusion list - this filter will exclude TV shows from chosen countries that have a specific genre
 tv_excluded_countries = ['jp', 'kr', 'cn', 'in']  # ISO 3166-1 alpha-2 codes lowercas, jp, kr, us for Japan, Korea, and the US
-tv_excluded_genres = ['Horror']  # ISO 3166-1 alpha-2 codes lowercas, jp, kr, us for Japan, Korea, and the US
-#tv_excluded_genres = {
-#    'US': ['Horror'],  # put the country code as above an add genre like hooror, the would look like 'US':['Horror'] would filter all us horror movies 
-#    'GB': ['*'],  # 'KR':['Animation','Drama'] Exclude Animation and Drama from Korea
-#    'JP': ['*'],           # 'US':['Animation']Exclude Animation from the US
-#    'KR': ['*'],
-#    'CN': ['*'],
-#    'IN': ['*']
-#}
+tv_excluded_genres = ['Horror']  # 'Horror' would filter all us horror movies
 
 # Movie Exclusion list - this filter will exclude movies from chosen countries that have a specific genre
 movie_excluded_countries = ['jp', 'kr', 'cn', 'in']  # ISO 3166-1 alpha-2 codes lowercas, jp, kr, us for Japan, Korea, and the US
-movie_excluded_genres = ['Horror']  # ISO 3166-1 alpha-2 codes lowercas, jp, kr, us for Japan, Korea, and the US
-
-#movie_excluded_genres = {
-#    'US': ['Horror'],  # put the country code as above an add genre like hooror, the would look like 'US':['Horror'] would filter all us horror movies 
-#    'GB': ['*'],  # 'KR':['Animation','Drama'] Exclude Animation and Drama from Korea
-#    'JP': ['*'],           # 'US':['Animation']Exclude Animation from the US
-#    'KR': ['*'],
-#    'CN': ['*'],
-#    'IN': ['*']
-#}
+movie_excluded_genres = ['Horror']  #  'Horror' would filter all us horror movies
 
 # Keyword exclusion list - this filter will exclude movies or TV shows that contain a specific keyword in their TMDB profile
 excluded_keywords = []  # like ['adult']
@@ -78,9 +60,7 @@ if not os.path.exists(truetype_path):
     except Exception as e:
         print(f"An error occurred while downloading the InterTight-Regular font: {e}")
 
-# Save font locally
-#truetype_url2 = 'https://github.com/googlefonts/roboto/raw/main/src/hinted/Roboto-Light.ttf'
-#truetype_path2 = 'Roboto-Light.ttf'
+# Save font2 locally
 truetype_url2 = 'https://github.com/googlefonts/inter-gf-tight/raw/refs/heads/main/fonts/ttf/InterTight-Light.ttf'
 truetype_path2 = 'InterTight-Light.ttf'
 
@@ -139,17 +119,9 @@ def get_tv_keywords(tv_id):
     return []
 
 # Function to fetch watch providers for a movie
-#def get_movie_watch_providers(movie_id):
-#    watch_providers_url = f"{TMDB_BASE_URL}/movie/{movie_id}/watch/providers"
-#    movie_watch_providers_response = requests.get(watch_providers_url, headers=headers)
-#    return movie_watch_providers_response.json()
-
-######
-#
 def get_movie_watch_providers_loop(movie_id):
-
     TARGET_REGION = "GB"
-    
+
     watch_providers_url = f"{TMDB_BASE_URL}/movie/{movie_id}/watch/providers"
     response = requests.get(watch_providers_url, headers=headers)
     
@@ -171,34 +143,17 @@ def get_movie_watch_providers_loop(movie_id):
         ]
         
         # Remove duplicates since a platform like Apple TV can be under both 'rent' and 'buy'
-#        unique_providers = list(set(all_provider_names))
-#        unique_providers.sort(reverse=True)
-
+        # Remove duplicate platform tiers like Ad supported
         unique_providers = [i for i in list(set(all_provider_names)) if not i.endswith("with Ads") and not i.endswith("Amazon Channel") and not i.endswith("Apple TV Channel")]
 
         print(f"{unique_providers}")
- #       print(process.dedupe(unique_providers, threshold=70))
-
         return unique_providers
         
-    #    print(f"--- All Available Platforms in {TARGET_REGION} ---")
-    #    for name in unique_providers:
-    #        print(f"- {name}")
     else:
         print(f"Error fetching data: {response.status_code}")
 
-######
-
-# Function to fetch keywords for a TV show
-#def get_tv_watch_providers(tv_id):
-#    watch_providers_url = f"{TMDB_BASE_URL}/tv/{tv_id}/watch/providers"
-#    tv_watch_providers_response = requests.get(watch_providers_url, headers=headers)
-#    return tv_watch_providers_response.json()
-
-######
-#
+# Function to fetch watch providers for a tv show
 def get_tv_watch_providers_loop(tv_id):
-
     TARGET_REGION = "GB"
     
     watch_providers_url = f"{TMDB_BASE_URL}/tv/{tv_id}/watch/providers"
@@ -222,23 +177,14 @@ def get_tv_watch_providers_loop(tv_id):
         ]
         
         # Remove duplicates since a platform like Apple TV can be under both 'rent' and 'buy'
-#        unique_providers = list(set(all_provider_names))
-#        unique_providers.sort(reverse=True)
-
+        # Remove duplicate platform tiers like Ad supported
         unique_providers = [i for i in list(set(all_provider_names)) if not i.endswith("with Ads") and not i.endswith("Amazon Channel") and not i.endswith("Apple TV Channel")]
 
         print(f"{unique_providers}")
- #       print(process.dedupe(unique_providers, threshold=70))
-
         return unique_providers
         
-    #    print(f"--- All Available Platforms in {TARGET_REGION} ---")
-    #    for name in unique_providers:
-    #        print(f"- {name}")
     else:
         print(f"Error fetching data: {response.status_code}")
-
-######
 
 # Filter criteria for movies
 def should_exclude_movie(movie, movie_excluded_countries=movie_excluded_countries, movie_excluded_genres=movie_excluded_genres, excluded_keywords=excluded_keywords):
@@ -251,17 +197,6 @@ def should_exclude_movie(movie, movie_excluded_countries=movie_excluded_countrie
     
     # Fetch movie keywords
     movie_keywords = get_movie_keywords(movie['id']) if excluded_keywords else []
-
-    # Fetch movie watch providers
-#    movie_watch_providers = get_movie_watch_providers(movie['id'])
-#    try:
-#        watch_provider = movie_watch_providers['results']['GB']['flatrate'][0]['provider_name']
-#        custom_text = f"Available on {watch_provider}"
-#        print(f"Watch providers: {movie['title']} ({watch_provider})")
-#    except KeyError:
-#        custom_text = ""
-#        print(f"No watch providers for movie {movie['id']}")
-#        return True
 
     # Fetch movie watch providers
     movie_watch_providers = get_movie_watch_providers_loop(movie['id'])
@@ -320,16 +255,6 @@ def should_exclude_tvshow(tvshow, tv_excluded_countries=tv_excluded_countries, t
     if any(keyword in tv_keywords for keyword in excluded_keywords):
         return True
 
-#    tv_watch_providers = get_tv_watch_providers(tvshow['id'])
-#    try:
-#        watch_provider = tv_watch_providers['results']['GB']['flatrate'][0]['provider_name']
-#        custom_text = f"Available on {watch_provider}"
-#        print(f"Watch providers: {tvshow['id']} ({watch_provider})")
-#    except KeyError:
-#        custom_text = ""
-#        print(f"No watch providers for tv show {tvshow['id']}")
-#        return True
-
     # Fetch tv watch providers
     tv_watch_providers = get_tv_watch_providers_loop(tvshow['id'])
     if tv_watch_providers:
@@ -369,8 +294,6 @@ trending_tvshows_url = f'{TMDB_BASE_URL}/discover/tv?without_genres=10766|10763|
 
 # Fetch more than required to allow filtering
 initial_fetch_count = numberofmovies + 10  # Fetch 15 to get at least 5 valid ones
-#trending_movies_url = f'{TMDB_BASE_URL}/trending/movie/week?language={LANGUAGE}'
-#trending_movies_url = f'{TMDB_BASE_URL}/discover/movie?without_genres=27|99&with_release_type=4|3&release_date.lte={date_str}&release_date.gte={max_air_date}&with_origin_country=US|GB&certification.lte=15&certification_country=GB&include_adult=false&include_video=false&language=en-US&region=GB&sort_by=primary_release_date.desc&vote_average.gte=6&vote_count.gte=10&watch_region=GB'
 trending_movies_response = requests.get(trending_movies_url, headers=headers)
 all_movies = trending_movies_response.json().get('results', [])[:initial_fetch_count]
 
@@ -390,8 +313,6 @@ trending_movies = {'results': valid_movies}
 
 # Fetching trending TV shows
 initial_fetch_count = numberoftvshows + 10  # Fetch more than needed
-#trending_tvshows_url = f'{TMDB_BASE_URL}/trending/tv/week?language={LANGUAGE}'
-#trending_tvshows_url = f'{TMDB_BASE_URL}/discover/tv?without_genres=10766|10763|10767|10768|99&with_type=4|3&first_air_date.lte={date_str}&first_air_date.gte={max_air_date}&with_origin_country=US|GB&certification.lte=15&certification_country=GB&include_adult=false&include_video=false&language=en-US&region=GB&sort_by=first_air_date.desc&vote_average.gte=6&vote_count.gte=10&watch_region=GB'
 trending_tvshows_response = requests.get(trending_tvshows_url, headers=headers)
 all_tvshows = trending_tvshows_response.json().get('results', [])[:initial_fetch_count]
 
@@ -410,13 +331,6 @@ background_dir = "tmdb_backgrounds2"
 if os.path.exists(background_dir):
     shutil.rmtree(background_dir)
 os.makedirs(background_dir, exist_ok=True)
-
-# self.output_dir = background_dir
-        
-# Clean and create output directory
-# if self.output_dir.exists():
-#     shutil.rmtree(self.output_dir)
-# self.output_dir.mkdir(parents=True, exist_ok=True)
 
 # Truncate overview
 def truncate_overview(overview, max_chars):
@@ -464,7 +378,6 @@ def vignette_side(h, w, fade_ratio=5, fade_power=5.0, position="bottom-left", of
     """
     y, x = np.ogrid[0:h, 0:w]
     rx, ry = w * fade_ratio, h * fade_ratio
-#    rx, ry = w * 0.1, h * fade_ratio
 
     dist_x, dist_y = np.ones_like(x, dtype=np.float32), np.ones_like(y, dtype=np.float32)
 
@@ -593,7 +506,6 @@ def process_image(image_url, title, is_movie, genre, year, rating, duration=None
         # Generate blurred/vignette background instead of static overlay
         bckg = generate_background_fast(input_img, target_width=3840)
 
-
         draw = ImageDraw.Draw(bckg)
 
         tmdblogo = Image.open(os.path.join(os.path.dirname(__file__), "tmdblogo.png"))
@@ -629,7 +541,6 @@ def process_image(image_url, title, is_movie, genre, year, rating, duration=None
         summary_height = (line_height * len(lines)) + (line_spacing * (len(lines) - 1))
 
         custom_position =  (210, overview_position[1] + summary_height + 120)
-
 
         # Overview
         draw.text((overview_position[0] + shadow_offset, overview_position[1] + shadow_offset),
@@ -682,7 +593,7 @@ def process_image(image_url, title, is_movie, genre, year, rating, duration=None
         draw.text((custom_position[0] + shadow_offset, custom_position[1] + shadow_offset),
                   custom_text, font=font_custom, fill=shadow_color)
         draw.text(custom_position, custom_text, font=font_custom, fill=custom_color)
-#
+
 #        bckg.paste(tmdblogo, (608, custom_position[1] + 18), tmdblogo)    #was 680, custom_position[1] + 20
 
         # Save
@@ -707,27 +618,11 @@ for movie in trending_movies.get('results', []):
     year = movie['release_date']
     rating = round(movie['vote_average'], 1)
     genre = ', '.join([movie_genres[genre_id] for genre_id in movie['genre_ids']])
-#    custom_text = f"Available on {get_movie_watch_providers(movie['id'])}"
     
     # Fetch movie watch providers
     movie_watch_providers = get_movie_watch_providers_loop(movie['id'])
-#    try:
-#        watch_provider = movie_watch_providers['results']['GB']['flatrate'][0]['provider_name']
-#        custom_text = f"Available on {watch_provider}"
-#    except KeyError:
-#        custom_text = ""
-#        print(f"No watch providers")
-
-#    movie_watch_providers_loop = get_movie_watch_providers_loop(movie['id'])
-
-#    movie_watch_providers = get_movie_watch_providers(movie['id'])
-#    watch_provider = ', '.join(name for name in movie_watch_providers)
-#    custom_text = f"Available on {watch_provider}"
-#    for name in movie_watch_providers:
-#        watch_provider = (f"Available- {name}")
 
     # Fetch movie watch providers
-#    movie_watch_providers = get_movie_watch_providers_loop(movie['id'])
     movie_watch_providers = ', '.join(watch_provider for watch_provider in get_movie_watch_providers_loop(movie['id']))
     if movie_watch_providers:
         custom_text = f"Available on {movie_watch_providers}"
@@ -750,7 +645,7 @@ for movie in trending_movies.get('results', []):
 
     # Check if backdrop image is available
     backdrop_path = movie['backdrop_path']
-#    custom_text = "Now Trending on TMDB"
+
     if backdrop_path:
         # Construct image URL
         image_url = f"https://image.tmdb.org/t/p/original{backdrop_path}"
@@ -774,15 +669,6 @@ for tvshow in trending_tvshows.get('results', []):
     rating = round(tvshow['vote_average'], 1)
     genre = ', '.join([tv_genres[genre_id] for genre_id in tvshow['genre_ids']])
 
-    # Fetch movie watch providers
-#    tv_watch_providers = get_tv_watch_providers_loop(tvshow['id'])
-#    try:
-#        watch_provider = tv_watch_providers['results']['GB']['flatrate'][0]['provider_name']
-#        custom_text = f"Available on {watch_provider}"
-#    except KeyError:
-#        custom_text = ""
-#        print(f"BBB No watch providers - {title}")
-
     # Fetch tv watch providers
     tv_watch_providers = ', '.join(watch_provider for watch_provider in get_tv_watch_providers_loop(tvshow['id']))
     if tv_watch_providers:
@@ -798,7 +684,7 @@ for tvshow in trending_tvshows.get('results', []):
 
     # Check if backdrop image is available
     backdrop_path = tvshow['backdrop_path']
-#    custom_text = "Now Trending on TMDB"
+
     if backdrop_path:
         # Construct image URL
         image_url = f"https://image.tmdb.org/t/p/original{backdrop_path}"
