@@ -686,7 +686,6 @@ for movie in trending_movies.get('results', []):
     else:
         custom_text = ""
         print(f"Process movie: No watch providers for movie {movie['id']}")
-        return True
         
     # Fetch additional movie details
     movie_details = get_movie_details(movie['id'])
