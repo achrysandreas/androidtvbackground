@@ -223,7 +223,7 @@ def should_exclude_movie(movie, movie_excluded_countries=movie_excluded_countrie
     try:
 #        watch_provider = movie_watch_providers['results']
         custom_text = f"Available on {movie_watch_providers}"
-        print(f"Watch providers: {movie['title']} ({watch_provider})")
+        print(f"Watch providers: {movie['title']} ({movie_watch_providers})")
     except KeyError:
         custom_text = ""
         print(f"No watch providers for movie {movie['id']}")
