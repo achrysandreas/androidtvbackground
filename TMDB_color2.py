@@ -208,9 +208,20 @@ def should_exclude_movie(movie, movie_excluded_countries=movie_excluded_countrie
     movie_keywords = get_movie_keywords(movie['id']) if excluded_keywords else []
 
     # Fetch movie watch providers
-    movie_watch_providers = get_movie_watch_providers(movie['id'])
+#    movie_watch_providers = get_movie_watch_providers(movie['id'])
+#    try:
+#        watch_provider = movie_watch_providers['results']['GB']['flatrate'][0]['provider_name']
+#        custom_text = f"Available on {watch_provider}"
+#        print(f"Watch providers: {movie['title']} ({watch_provider})")
+#    except KeyError:
+#        custom_text = ""
+#        print(f"No watch providers for movie {movie['id']}")
+#        return True
+
+    # Fetch movie watch providers
+    movie_watch_providers = get_movie_watch_providers_loop(movie['id'])
     try:
-        watch_provider = movie_watch_providers['results']['GB']['flatrate'][0]['provider_name']
+        watch_provider = movie_watch_providers['results']
         custom_text = f"Available on {watch_provider}"
         print(f"Watch providers: {movie['title']} ({watch_provider})")
     except KeyError:
