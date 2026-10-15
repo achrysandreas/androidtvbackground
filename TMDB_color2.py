@@ -195,6 +195,51 @@ def get_tv_watch_providers(tv_id):
     tv_watch_providers_response = requests.get(watch_providers_url, headers=headers)
     return tv_watch_providers_response.json()
 
+######
+#
+def get_tv_watch_providers_loop(tv_id):
+
+    TARGET_REGION = "GB"
+    
+    watch_providers_url = f"{TMDB_BASE_URL}/tv/{tv_id}/watch/providers"
+    response = requests.get(watch_providers_url, headers=headers)
+    
+    if response.status_code == 200:
+        data = response.json()
+        regional_data = data.get("results", {}).get(TARGET_REGION, {})
+        
+        # List fields we want to check (like categories of streaming/buying)
+        categories = ["flatrate", "free"]    # ["flatrate", "buy", "rent", "free"]
+        
+        # Deep nested wildcard extraction:
+        # 1. Loop through each category key in our list
+        # 2. Grab the array of providers inside it safely (default to empty list if missing)
+        # 3. Extract the provider name from every single item found
+        all_provider_names = [
+            provider["provider_name"]
+            for category in categories
+            for provider in regional_data.get(category, [])
+        ]
+        
+        # Remove duplicates since a platform like Apple TV can be under both 'rent' and 'buy'
+#        unique_providers = list(set(all_provider_names))
+#        unique_providers.sort(reverse=True)
+
+        unique_providers = [i for i in list(set(all_provider_names)) if not i.endswith("with Ads") and not i.endswith("Amazon Channel") and not i.endswith("Apple TV Channel")]
+
+        print(f"{unique_providers}")
+ #       print(process.dedupe(unique_providers, threshold=70))
+
+        return unique_providers
+        
+    #    print(f"--- All Available Platforms in {TARGET_REGION} ---")
+    #    for name in unique_providers:
+    #        print(f"- {name}")
+    else:
+        print(f"Error fetching data: {response.status_code}")
+
+######
+
 # Filter criteria for movies
 def should_exclude_movie(movie, movie_excluded_countries=movie_excluded_countries, movie_excluded_genres=movie_excluded_genres, excluded_keywords=excluded_keywords):
     # Check if the movie's country is in the excluded countries list
@@ -221,13 +266,8 @@ def should_exclude_movie(movie, movie_excluded_countries=movie_excluded_countrie
     # Fetch movie watch providers
     movie_watch_providers = get_movie_watch_providers_loop(movie['id'])
     if movie_watch_providers:
-#    try:
-#        watch_provider = movie_watch_providers['results']
-#        custom_text = f"Available on {movie_watch_providers}"
         print(f"Exclude function: Watch providers: {movie['title']} ({movie_watch_providers})")
- #   except KeyError:
     else:
-#        custom_text = ""
         print(f"Exclude function: No watch providers for movie {movie['id']}")
         return True
     
@@ -280,16 +320,24 @@ def should_exclude_tvshow(tvshow, tv_excluded_countries=tv_excluded_countries, t
     if any(keyword in tv_keywords for keyword in excluded_keywords):
         return True
 
-    tv_watch_providers = get_tv_watch_providers(tvshow['id'])
-    try:
-        watch_provider = tv_watch_providers['results']['GB']['flatrate'][0]['provider_name']
-        custom_text = f"Available on {watch_provider}"
-        print(f"Watch providers: {tvshow['id']} ({watch_provider})")
-    except KeyError:
-        custom_text = ""
-        print(f"No watch providers for tv show {tvshow['id']}")
+#    tv_watch_providers = get_tv_watch_providers(tvshow['id'])
+#    try:
+#        watch_provider = tv_watch_providers['results']['GB']['flatrate'][0]['provider_name']
+#        custom_text = f"Available on {watch_provider}"
+#        print(f"Watch providers: {tvshow['id']} ({watch_provider})")
+#    except KeyError:
+#        custom_text = ""
+#        print(f"No watch providers for tv show {tvshow['id']}")
+#        return True
+
+    # Fetch tv watch providers
+    tv_watch_providers = get_tv_watch_providers_loop(tvshow['id'])
+    if tv_watch_providers:
+        print(f"Exclude function: Watch providers: {tvshow['title']} ({movie_watch_providers})")
+    else:
+        print(f"Exclude function: No watch providers for tv show {tvshow['id']}")
         return True
-    
+        
     # Check last air date
     last_air_date_str = get_tv_show_details(tvshow['id']).get('last_air_date')
     if last_air_date_str:
