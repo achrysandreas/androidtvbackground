@@ -333,7 +333,7 @@ def should_exclude_tvshow(tvshow, tv_excluded_countries=tv_excluded_countries, t
     # Fetch tv watch providers
     tv_watch_providers = get_tv_watch_providers_loop(tvshow['id'])
     if tv_watch_providers:
-        print(f"Exclude function: Watch providers: {tvshow['title']} ({movie_watch_providers})")
+        print(f"Exclude function: Watch providers: {tvshow['title']} ({tv_watch_providers})")
     else:
         print(f"Exclude function: No watch providers for tv show {tvshow['id']}")
         return True
