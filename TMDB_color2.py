@@ -564,8 +564,8 @@ def process_image(image_url, title, is_movie, genre, year, rating, duration=None
 
         # Overview
         draw.text((overview_position[0] + shadow_offset, overview_position[1] + shadow_offset),
-                  wrapped_overview, font=font_overview, fill=shadow_color)
-        draw.text(overview_position, wrapped_overview, font=font_overview, fill=overview_color)
+                  wrapped_overview, font=font_overview, fill=shadow_color, spacing=4)
+        draw.text(overview_position, wrapped_overview, font=font_overview, fill=overview_color, spacing=4)
 
         # Metadata
         if is_movie:
