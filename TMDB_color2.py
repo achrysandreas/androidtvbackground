@@ -549,7 +549,7 @@ def process_image(image_url, title, is_movie, genre, year, rating, duration=None
         title_position = (200, 720)
         overview_position = (210, 1044)    #was 730
         shadow_offset = 1
-        info_position = (210, 968)    #was 650
+        info_position = (210, 972)    #was 650
         line_spacing = 16
 
         # Wrap overview
