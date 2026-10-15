@@ -146,7 +146,6 @@ def get_movie_watch_providers_loop(movie_id):
         # Remove duplicate platform tiers like Ad supported
         unique_providers = [i for i in list(set(all_provider_names)) if not i.endswith("with Ads") and not i.endswith("Amazon Channel") and not i.endswith("Apple TV Channel")]
 
-        print(f"{unique_providers}")
         return unique_providers
         
     else:
@@ -180,7 +179,6 @@ def get_tv_watch_providers_loop(tv_id):
         # Remove duplicate platform tiers like Ad supported
         unique_providers = [i for i in list(set(all_provider_names)) if not i.endswith("with Ads") and not i.endswith("Amazon Channel") and not i.endswith("Apple TV Channel")]
 
-        print(f"{unique_providers}")
         return unique_providers
         
     else:
