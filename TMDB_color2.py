@@ -7,6 +7,7 @@ from io import BytesIO
 import os
 import shutil
 import textwrap
+from fuzzywuzzy import fuzz, process
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
 load_dotenv(verbose=True)
