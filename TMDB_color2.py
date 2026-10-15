@@ -661,15 +661,15 @@ for movie in trending_movies.get('results', []):
     genre = ', '.join([movie_genres[genre_id] for genre_id in movie['genre_ids']])
 
     # Fetch movie watch providers
-    movie_watch_providers = get_movie_watch_providers(movie['id'])
-    try:
-        watch_provider = movie_watch_providers['results']['GB']['flatrate'][0]['provider_name']
-        custom_text = f"Available on {watch_provider}"
-    except KeyError:
-        custom_text = ""
-        print(f"No watch providers")
+#    movie_watch_providers = get_movie_watch_providers(movie['id'])
+#    try:
+#        watch_provider = movie_watch_providers['results']['GB']['flatrate'][0]['provider_name']
+#        custom_text = f"Available on {watch_provider}"
+#    except KeyError:
+#        custom_text = ""
+#        print(f"No watch providers")
 
-    movie_watch_providers_loop = get_movie_watch_providers_loop(movie['id'])
+#    movie_watch_providers_loop = get_movie_watch_providers_loop(movie['id'])
 
 #    movie_watch_providers = get_movie_watch_providers(movie['id'])
 #    watch_provider = ', '.join(name for name in movie_watch_providers)
