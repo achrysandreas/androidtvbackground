@@ -143,8 +143,9 @@ def get_movie_watch_providers_loop(movie_id):
         ]
         
         # Remove duplicates since a platform like Apple TV can be under both 'rent' and 'buy'
-        # Remove duplicate platform tiers like Ad supported
-        unique_providers = [i for i in list(set(all_provider_names)) if not i.endswith("with Ads") and not i.endswith("Amazon Channel") and not i.endswith("Apple TV Channel")]
+        # Remove platform tier suffixes like Ad supported
+        suffixes = ("with Ads", "Amazon Channel", "Apple TV Channel")
+        unique_providers = [i for i in list(set(all_provider_names)) if not i.endswith(suffixes)]
 
         return unique_providers
         
@@ -176,8 +177,9 @@ def get_tv_watch_providers_loop(tv_id):
         ]
         
         # Remove duplicates since a platform like Apple TV can be under both 'rent' and 'buy'
-        # Remove duplicate platform tiers like Ad supported
-        unique_providers = [i for i in list(set(all_provider_names)) if not i.endswith("with Ads") and not i.endswith("Amazon Channel") and not i.endswith("Apple TV Channel")]
+        # Remove platform tier suffixes like Ad supported
+        suffixes = ("with Ads", "Amazon Channel", "Apple TV Channel")
+        unique_providers = [i for i in list(set(all_provider_names)) if not i.endswith(suffixes)]
 
         return unique_providers
         
