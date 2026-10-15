@@ -775,7 +775,7 @@ for tvshow in trending_tvshows.get('results', []):
     genre = ', '.join([tv_genres[genre_id] for genre_id in tvshow['genre_ids']])
 
     # Fetch movie watch providers
-    tv_watch_providers = get_tv_watch_providers(tvshow['id'])
+    tv_watch_providers = get_tv_watch_providers_loop(tvshow['id'])
     try:
         watch_provider = tv_watch_providers['results']['GB']['flatrate'][0]['provider_name']
         custom_text = f"Available on {watch_provider}"
