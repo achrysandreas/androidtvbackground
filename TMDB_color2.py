@@ -145,41 +145,44 @@ def get_movie_watch_providers(movie_id):
 
 ######
 #
-#def get_movie_watch_providers(movie_id):
-#
-#    TARGET_REGION = "GB"
-#    
-#    watch_providers_url = f"{TMDB_BASE_URL}/movie/{movie_id}/watch/providers"
-#    response = requests.get(watch_providers_url, headers=headers)
-#    
-#    if response.status_code == 200:
-#        data = response.json()
-#        regional_data = data.get("results", {}).get(TARGET_REGION, {})
-#        
-#        # List fields we want to check (like categories of streaming/buying)
-#        categories = ["flatrate", "free"]    # ["flatrate", "buy", "rent", "free"]
-#        
-#        # Deep nested wildcard extraction:
-#        # 1. Loop through each category key in our list
-#        # 2. Grab the array of providers inside it safely (default to empty list if missing)
-#        # 3. Extract the provider name from every single item found
-#        all_provider_names = [
-#            provider["provider_name"]
-#            for category in categories
-#            for provider in regional_data.get(category, [])
-#        ]
-#        
-#        # Remove duplicates since a platform like Apple TV can be under both 'rent' and 'buy'
-#        unique_providers = list(set(all_provider_names))
-#    
-#        return unique_providers
-#        
-#    #    print(f"--- All Available Platforms in {TARGET_REGION} ---")
-#    #    for name in unique_providers:
-#    #        print(f"- {name}")
-#    else:
-#        print(f"Error fetching data: {response.status_code}")
-#
+def get_movie_watch_providers_loop(movie_id):
+
+    TARGET_REGION = "GB"
+    
+    watch_providers_url = f"{TMDB_BASE_URL}/movie/{movie_id}/watch/providers"
+    response = requests.get(watch_providers_url, headers=headers)
+    
+    if response.status_code == 200:
+        data = response.json()
+        regional_data = data.get("results", {}).get(TARGET_REGION, {})
+        
+        # List fields we want to check (like categories of streaming/buying)
+        categories = ["flatrate", "free"]    # ["flatrate", "buy", "rent", "free"]
+        
+        # Deep nested wildcard extraction:
+        # 1. Loop through each category key in our list
+        # 2. Grab the array of providers inside it safely (default to empty list if missing)
+        # 3. Extract the provider name from every single item found
+        all_provider_names = [
+            provider["provider_name"]
+            for category in categories
+            for provider in regional_data.get(category, [])
+        ]
+        
+        # Remove duplicates since a platform like Apple TV can be under both 'rent' and 'buy'
+        unique_providers = list(set(all_provider_names))
+
+        print(f"{unique_providers}")
+        print(process.dedupe(unique_providers, threshold=70))
+
+        return unique_providers
+        
+    #    print(f"--- All Available Platforms in {TARGET_REGION} ---")
+    #    for name in unique_providers:
+    #        print(f"- {name}")
+    else:
+        print(f"Error fetching data: {response.status_code}")
+
 ######
 
 # Function to fetch keywords for a TV show
@@ -648,6 +651,8 @@ for movie in trending_movies.get('results', []):
     except KeyError:
         custom_text = ""
         print(f"No watch providers")
+
+    movie_watch_providers_loop = get_movie_watch_providers_loop(movie['id'])
 
 #    movie_watch_providers = get_movie_watch_providers(movie['id'])
 #    watch_provider = ', '.join(name for name in movie_watch_providers)
