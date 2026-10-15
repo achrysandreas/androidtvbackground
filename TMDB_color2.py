@@ -171,11 +171,13 @@ def get_movie_watch_providers_loop(movie_id):
         ]
         
         # Remove duplicates since a platform like Apple TV can be under both 'rent' and 'buy'
-        unique_providers = list(set(all_provider_names))
-        unique_providers.sort(reverse=True)
+#        unique_providers = list(set(all_provider_names))
+#        unique_providers.sort(reverse=True)
+
+        unique_providers = [i for i in list(set(all_provider_names)) if not i.endswith("with Ads") or i.endswith("Amazon Channel") or i.endswith("Apple TV Channel")]
 
         print(f"{unique_providers}")
-        print(process.dedupe(unique_providers, threshold=70))
+ #       print(process.dedupe(unique_providers, threshold=70))
 
         return unique_providers
         
