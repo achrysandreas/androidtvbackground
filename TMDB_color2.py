@@ -200,10 +200,8 @@ def should_exclude_movie(movie, movie_excluded_countries=movie_excluded_countrie
 
     # Fetch movie watch providers
     movie_watch_providers = get_movie_watch_providers_loop(movie['id'])
-    if movie_watch_providers:
-        print(f"Exclude function: Watch providers: {movie['title']} ({movie_watch_providers})")
-    else:
-        print(f"Exclude function: No watch providers for movie {movie['id']}")
+    if not movie_watch_providers:
+        print(f"Exclude function: No watch providers for movie {movie['title']}")
         return True
     
     # Check release date
@@ -257,10 +255,8 @@ def should_exclude_tvshow(tvshow, tv_excluded_countries=tv_excluded_countries, t
 
     # Fetch tv watch providers
     tv_watch_providers = get_tv_watch_providers_loop(tvshow['id'])
-    if tv_watch_providers:
-        print(f"Exclude function: Watch providers: {tvshow['id']} ({tv_watch_providers})")
-    else:
-        print(f"Exclude function: No watch providers for tv show {tvshow['id']}")
+    if not tv_watch_providers:
+        print(f"Exclude function: No watch providers for tv show {tvshow['name']}")
         return True
         
     # Check last air date
@@ -627,9 +623,9 @@ for movie in trending_movies.get('results', []):
     if movie_watch_providers:
         custom_text = f"Available on {movie_watch_providers}"
         print(f"Process movie: Watch providers: {movie['title']} ({movie_watch_providers})")
-    else:
-        custom_text = ""
-        print(f"Process movie: No watch providers for movie {movie['id']}")
+#    else:
+#        custom_text = ""
+#        print(f"Process movie: No watch providers for movie {movie['id']}")
         
     # Fetch additional movie details
     movie_details = get_movie_details(movie['id'])
@@ -673,10 +669,10 @@ for tvshow in trending_tvshows.get('results', []):
     tv_watch_providers = ', '.join(watch_provider for watch_provider in get_tv_watch_providers_loop(tvshow['id']))
     if tv_watch_providers:
         custom_text = f"Available on {tv_watch_providers}"
-        print(f"Process tv show: Watch providers: {tvshow['id']} ({tv_watch_providers})")
-    else:
-        custom_text = ""
-        print(f"Process tv show: No watch providers for tv show {tvshow['id']}")
+        print(f"Process tv show: Watch providers: {tvshow['name']} ({tv_watch_providers})")
+#    else:
+#        custom_text = ""
+#        print(f"Process tv show: No watch providers for tv show {tvshow['id']}")
 
     # Fetch additional TV show details
     tv_details = get_tv_show_details(tvshow['id'])
