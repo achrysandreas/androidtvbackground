@@ -679,7 +679,8 @@ for movie in trending_movies.get('results', []):
 #        watch_provider = (f"Available- {name}")
 
     # Fetch movie watch providers
-    movie_watch_providers = get_movie_watch_providers_loop(movie['id'])
+#    movie_watch_providers = get_movie_watch_providers_loop(movie['id'])
+    movie_watch_providers = ', '.join(watch_provider for watch_provider in get_movie_watch_providers_loop(movie['id']))
     if movie_watch_providers:
         custom_text = f"Available on {movie_watch_providers}"
         print(f"Process movie: Watch providers: {movie['title']} ({movie_watch_providers})")
