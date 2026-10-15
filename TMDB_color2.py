@@ -558,7 +558,7 @@ def process_image(image_url, title, is_movie, genre, year, rating, duration=None
         line_height = bbox[3] - bbox[1]
 
         # Total height of wrapped summary
-        summary_height = (line_height * len(lines)) + (line_spacing * (len(lines) - 1)
+        summary_height = (line_height * len(lines)) + (line_spacing * (len(lines) - 1))
 
         custom_position =  (210, overview_position[1] + summary_height + 120)
 
