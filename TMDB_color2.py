@@ -190,10 +190,10 @@ def get_movie_watch_providers_loop(movie_id):
 ######
 
 # Function to fetch keywords for a TV show
-def get_tv_watch_providers(tv_id):
-    watch_providers_url = f"{TMDB_BASE_URL}/tv/{tv_id}/watch/providers"
-    tv_watch_providers_response = requests.get(watch_providers_url, headers=headers)
-    return tv_watch_providers_response.json()
+#def get_tv_watch_providers(tv_id):
+#    watch_providers_url = f"{TMDB_BASE_URL}/tv/{tv_id}/watch/providers"
+#    tv_watch_providers_response = requests.get(watch_providers_url, headers=headers)
+#    return tv_watch_providers_response.json()
 
 ######
 #
