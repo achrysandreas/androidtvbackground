@@ -172,7 +172,7 @@ def get_movie_watch_providers_loop(movie_id):
         
         # Remove duplicates since a platform like Apple TV can be under both 'rent' and 'buy'
         unique_providers = list(set(all_provider_names))
-        unique_providers.sort(reverse=true)
+        unique_providers.sort(reverse=True)
 
         print(f"{unique_providers}")
         print(process.dedupe(unique_providers, threshold=70))
