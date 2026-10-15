@@ -223,12 +223,12 @@ def should_exclude_movie(movie, movie_excluded_countries=movie_excluded_countrie
     if movie_watch_providers:
 #    try:
 #        watch_provider = movie_watch_providers['results']
-        custom_text = f"Available on {movie_watch_providers}"
-        print(f"Watch providers: {movie['title']} ({movie_watch_providers})")
+#        custom_text = f"Available on {movie_watch_providers}"
+        print(f"Exclude function: Watch providers: {movie['title']} ({movie_watch_providers})")
  #   except KeyError:
     else:
-        custom_text = ""
-        print(f"No watch providers for movie {movie['id']}")
+#        custom_text = ""
+        print(f"Exclude function: No watch providers for movie {movie['id']}")
         return True
     
     # Check release date
@@ -659,9 +659,10 @@ for movie in trending_movies.get('results', []):
     year = movie['release_date']
     rating = round(movie['vote_average'], 1)
     genre = ', '.join([movie_genres[genre_id] for genre_id in movie['genre_ids']])
-
+#    custom_text = f"Available on {get_movie_watch_providers(movie['id'])}"
+    
     # Fetch movie watch providers
-#    movie_watch_providers = get_movie_watch_providers(movie['id'])
+    movie_watch_providers = get_movie_watch_providers(movie['id'])
 #    try:
 #        watch_provider = movie_watch_providers['results']['GB']['flatrate'][0]['provider_name']
 #        custom_text = f"Available on {watch_provider}"
@@ -676,7 +677,17 @@ for movie in trending_movies.get('results', []):
 #    custom_text = f"Available on {watch_provider}"
 #    for name in movie_watch_providers:
 #        watch_provider = (f"Available- {name}")
-    
+
+    # Fetch movie watch providers
+    movie_watch_providers = get_movie_watch_providers_loop(movie['id'])
+    if movie_watch_providers:
+        custom_text = f"Available on {movie_watch_providers}"
+        print(f"Process movie: Watch providers: {movie['title']} ({movie_watch_providers})")
+    else:
+        custom_text = ""
+        print(f"Process movie: No watch providers for movie {movie['id']}")
+        return True
+        
     # Fetch additional movie details
     movie_details = get_movie_details(movie['id'])
     duration = movie_details.get('runtime', 0)
