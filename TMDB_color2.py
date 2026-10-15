@@ -547,6 +547,7 @@ def process_image(image_url, title, is_movie, genre, year, rating, duration=None
         overview_position = (210, 1044)    #was 730
         shadow_offset = 1
         info_position = (210, 968)    #was 650
+        line_spacing = 8
 
         # Wrap overview
         wrapped_overview = "\n".join(textwrap.wrap(overview, width=64, max_lines=3, placeholder=" ..."))
@@ -557,15 +558,15 @@ def process_image(image_url, title, is_movie, genre, year, rating, duration=None
         line_height = bbox[3] - bbox[1]
 
         # Total height of wrapped summary
-        summary_height = line_height * len(lines)
+        summary_height = (line_height * len(lines)) + (line_spacing * (len(lines) - 1)
 
         custom_position =  (210, overview_position[1] + summary_height + 120)
 
 
         # Overview
         draw.text((overview_position[0] + shadow_offset, overview_position[1] + shadow_offset),
-                  wrapped_overview, font=font_overview, fill=shadow_color, spacing=8)
-        draw.text(overview_position, wrapped_overview, font=font_overview, fill=overview_color, spacing=8)
+                  wrapped_overview, font=font_overview, fill=shadow_color, spacing=line_spacing)
+        draw.text(overview_position, wrapped_overview, font=font_overview, fill=overview_color, spacing=line_spacing)
 
         # Metadata
         if is_movie:
