@@ -63,8 +63,8 @@ max_air_date = datetime.now() - timedelta(days=90)  # specify the number of days
 # Save font locally
 #truetype_url = 'https://github.com/googlefonts/roboto/raw/main/src/hinted/Roboto-Regular.ttf'
 #truetype_path = 'Roboto-Regular.ttf'
-truetype_url = 'https://github.com/googlefonts/Montserrat/raw/refs/heads/master/fonts/ttf/Montserrat-Regular.ttf'
-truetype_path = 'Montserrat-Regular.ttf'
+truetype_url = 'https://github.com/googlefonts/inter-gf-tight/raw/refs/heads/main/fonts/ttf/InterTight-Regular.ttf'
+truetype_path = 'InterTight-Regular.ttf'
 if not os.path.exists(truetype_path):
     try:
         response = requests.get(truetype_url, timeout=10)
@@ -80,8 +80,8 @@ if not os.path.exists(truetype_path):
 # Save font locally
 #truetype_url2 = 'https://github.com/googlefonts/roboto/raw/main/src/hinted/Roboto-Light.ttf'
 #truetype_path2 = 'Roboto-Light.ttf'
-truetype_url2 = 'https://github.com/googlefonts/Montserrat/raw/refs/heads/master/fonts/ttf/Montserrat-Light.ttf'
-truetype_path2 = 'Montserrat-Light.ttf'
+truetype_url2 = 'https://github.com/googlefonts/inter-gf-tight/raw/refs/heads/main/fonts/ttf/InterTight-Light.ttf'
+truetype_path2 = 'InterTight-Light.ttf'
 
 if not os.path.exists(truetype_path2):
     try:
@@ -549,7 +549,7 @@ def process_image(image_url, title, is_movie, genre, year, rating, duration=None
         info_position = (210, 968)    #was 650
 
         # Wrap overview
-        wrapped_overview = "\n".join(textwrap.wrap(overview, width=65, max_lines=3, placeholder=" ..."))
+        wrapped_overview = "\n".join(textwrap.wrap(overview, width=64, max_lines=3, placeholder=" ..."))
         lines = wrapped_overview.split("\n")
 
         # Compute height of one line using getbbox
