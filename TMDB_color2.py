@@ -662,7 +662,7 @@ for movie in trending_movies.get('results', []):
 #    custom_text = f"Available on {get_movie_watch_providers(movie['id'])}"
     
     # Fetch movie watch providers
-    movie_watch_providers = get_movie_watch_providers(movie['id'])
+    movie_watch_providers = get_movie_watch_providers_loop(movie['id'])
 #    try:
 #        watch_provider = movie_watch_providers['results']['GB']['flatrate'][0]['provider_name']
 #        custom_text = f"Available on {watch_provider}"
