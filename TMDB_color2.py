@@ -139,10 +139,10 @@ def get_tv_keywords(tv_id):
     return []
 
 # Function to fetch watch providers for a movie
-def get_movie_watch_providers(movie_id):
-    watch_providers_url = f"{TMDB_BASE_URL}/movie/{movie_id}/watch/providers"
-    movie_watch_providers_response = requests.get(watch_providers_url, headers=headers)
-    return movie_watch_providers_response.json()
+#def get_movie_watch_providers(movie_id):
+#    watch_providers_url = f"{TMDB_BASE_URL}/movie/{movie_id}/watch/providers"
+#    movie_watch_providers_response = requests.get(watch_providers_url, headers=headers)
+#    return movie_watch_providers_response.json()
 
 ######
 #
@@ -220,7 +220,7 @@ def should_exclude_movie(movie, movie_excluded_countries=movie_excluded_countrie
 
     # Fetch movie watch providers
     movie_watch_providers = get_movie_watch_providers_loop(movie['id'])
-    if not movie_watch_providers:
+    if movie_watch_providers:
 #    try:
 #        watch_provider = movie_watch_providers['results']
         custom_text = f"Available on {movie_watch_providers}"
