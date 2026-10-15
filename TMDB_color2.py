@@ -221,8 +221,8 @@ def should_exclude_movie(movie, movie_excluded_countries=movie_excluded_countrie
     # Fetch movie watch providers
     movie_watch_providers = get_movie_watch_providers_loop(movie['id'])
     try:
-        watch_provider = movie_watch_providers['results']
-        custom_text = f"Available on {watch_provider}"
+#        watch_provider = movie_watch_providers['results']
+        custom_text = f"Available on {movie_watch_providers}"
         print(f"Watch providers: {movie['title']} ({watch_provider})")
     except KeyError:
         custom_text = ""
