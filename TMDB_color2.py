@@ -71,11 +71,11 @@ if not os.path.exists(truetype_path):
         if response.status_code == 200:
             with open(truetype_path, 'wb') as f:
                 f.write(response.content)
-            print("Roboto-Regular font saved")
+            print("InterTight-Regular font saved")
         else:
-            print(f"Failed to download Roboto-Regular font. Status code: {response.status_code}")
+            print(f"Failed to download InterTight-Regular font. Status code: {response.status_code}")
     except Exception as e:
-        print(f"An error occurred while downloading the Roboto-Regular font: {e}")
+        print(f"An error occurred while downloading the InterTight-Regular font: {e}")
 
 # Save font locally
 #truetype_url2 = 'https://github.com/googlefonts/roboto/raw/main/src/hinted/Roboto-Light.ttf'
@@ -89,11 +89,11 @@ if not os.path.exists(truetype_path2):
         if response.status_code == 200:
             with open(truetype_path2, 'wb') as f:
                 f.write(response.content)
-            print("Roboto-Light font saved")
+            print("InterTight-Light font saved")
         else:
-            print(f"Failed to download Roboto-Thin font. Status code: {response.status_code}")
+            print(f"Failed to download InterTight-Thin font. Status code: {response.status_code}")
     except Exception as e:
-        print(f"An error occurred while downloading the Roboto-Light font: {e}")
+        print(f"An error occurred while downloading the InterTight-Light font: {e}")
         
 
 # Fetching genres for movies
