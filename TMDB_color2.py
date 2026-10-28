@@ -270,12 +270,12 @@ def should_exclude_tvshow(tvshow, tv_excluded_countries=tv_excluded_countries, t
         last_air_date = None
 
     # Exclude if older than max_air_date
-    if last_air_date and last_air_date < max_air_date:
-        return True
+#    if last_air_date and last_air_date < max_air_date:
+#        return True
 
     # Include future shows
-    if last_air_date and last_air_date > datetime.now():
-        return False
+ #   if last_air_date and last_air_date > datetime.now():
+ #       return False
 
     return False
 
@@ -285,8 +285,8 @@ def should_exclude_tvshow(tvshow, tv_excluded_countries=tv_excluded_countries, t
 
 # Discover URLs
 tmdb_date = datetime.now().strftime("%Y-%m-%d")
-trending_movies_url = f'{TMDB_BASE_URL}/discover/movie?without_genres=27|99&release_date.gte={max_air_date}&certification.lte=15&certification_country=GB&include_adult=false&include_video=false&language=en-US&region=GB&sort_by=popularity.desc&vote_average.gte=6&vote_count.gte=10&watch_region=GB'    #&with_origin_country=US|GB&sort_by=primary_release_date.desc
-trending_tvshows_url = f'{TMDB_BASE_URL}/discover/tv?without_genres=10766|10763|10767|10768|99&first_air_date.gte={max_air_date}&certification.lte=15&certification_country=GB&include_adult=false&include_video=false&language=en-US&region=GB&sort_by=popularity.desc&vote_average.gte=6&vote_count.gte=10&watch_region=GB'   #&sort_by=first_air_date.desc
+trending_movies_url = f'{TMDB_BASE_URL}/discover/movie?without_genres=27|99&release_date.gte={max_air_date}&certification.lte=15&certification_country=GB&include_adult=false&include_video=false&with_origin_country=US|GB&language=en-US&region=GB&sort_by=popularity.desc&vote_average.gte=6&vote_count.gte=10&watch_region=GB'    #&with_origin_country=US|GB&sort_by=primary_release_date.desc
+trending_tvshows_url = f'{TMDB_BASE_URL}/discover/tv?without_genres=10766|10763|10767|10768|99&first_air_date.gte={max_air_date}&certification.lte=15&certification_country=GB&include_adult=false&include_video=false&with_origin_country=US|GB&language=en-US&region=GB&sort_by=popularity.desc&vote_average.gte=6&vote_count.gte=10&watch_region=GB'   #&sort_by=first_air_date.desc
 
 # Fetch more than required to allow filtering
 initial_fetch_count = numberofmovies + 10  # Fetch 15 to get at least 5 valid ones
