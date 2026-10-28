@@ -285,8 +285,8 @@ def should_exclude_tvshow(tvshow, tv_excluded_countries=tv_excluded_countries, t
 
 # Discover URLs
 tmdb_date = datetime.now().strftime("%Y-%m-%d")
-trending_movies_url = f'{TMDB_BASE_URL}/discover/movie?without_genres=27|99&certification.lte=15&certification_country=GB&include_adult=false&include_video=false&with_origin_country=US|GB&language=en-US&region=GB&sort_by=popularity.desc&vote_average.gte=6&vote_count.gte=10&watch_region=GB'    #&with_origin_country=US|GB&sort_by=primary_release_date.desc&release_date.gte={max_air_date}
-trending_tvshows_url = f'{TMDB_BASE_URL}/discover/tv?without_genres=10766|10763|10767|10768|99&certification.lte=15&certification_country=GB&include_adult=false&include_video=false&with_origin_country=US|GB&language=en-US&region=GB&sort_by=popularity.desc&vote_average.gte=6&vote_count.gte=10&watch_region=GB'   #&sort_by=first_air_date.desc&first_air_date.gte={max_air_date}
+trending_movies_url = f'{TMDB_BASE_URL}/discover/movie?without_genres=27|99&certification.lte=15&certification_country=GB&include_adult=false&include_video=false&with_origin_country=US|GB&language=en-US&region=GB&sort_by=popularity.desc&vote_average.gte=6&vote_count.gte=10&watch_region=GB&release_date.gte={max_air_date}'    #&with_origin_country=US|GB&sort_by=primary_release_date.desc
+trending_tvshows_url = f'{TMDB_BASE_URL}/discover/tv?without_genres=10766|10763|10767|10768|99&certification.lte=15&certification_country=GB&include_adult=false&include_video=false&with_origin_country=US|GB&language=en-US&region=GB&sort_by=popularity.desc&vote_average.gte=6&vote_count.gte=10&watch_region=GB&last_air_date.gte={max_air_date}'   #&sort_by=first_air_date.desc&first_air_date.gte={max_air_date}
 
 # Fetch more than required to allow filtering
 initial_fetch_count = numberofmovies + 10  # Fetch 15 to get at least 5 valid ones
@@ -440,7 +440,7 @@ def generate_background_fast(input_img, target_width=3840):
     mask = vignette_side(
         h, w,
         fade_ratio=0.5,
-        fade_power=5,
+        fade_power=1.75,
         position="bottom-left",
         offset_left=0-w/2,
         offset_bottom=h/5    #150
