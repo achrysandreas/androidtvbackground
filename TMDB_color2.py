@@ -26,7 +26,7 @@ headers = {
 date_str = datetime.now().strftime("%Y%m%d")
 
 # Set the number of movies and tvshows to get
-numberofmovies = 10
+numberofmovies = 20
 numberoftvshows = 10
 
 # TV Exclusion list - this filter will exclude TV shows from chosen countries that have a specific genre
