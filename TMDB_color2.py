@@ -285,8 +285,8 @@ def should_exclude_tvshow(tvshow, tv_excluded_countries=tv_excluded_countries, t
 
 # Discover URLs
 tmdb_date = datetime.now().strftime("%Y-%m-%d")
-trending_movies_url = f'{TMDB_BASE_URL}/discover/movie?without_genres=27|99&with_release_type=4|5|6&certification.lte=15&certification_country=GB&include_adult=false&include_video=false&with_origin_country=US|GB&language=en-US&region=GB&sort_by=popularity.desc&vote_average.gte=6&vote_count.gte=10&watch_region=GB&release_date.gte={max_air_date}&release_date.lte={tmdb_date}'    #&with_origin_country=US|GB&sort_by=primary_release_date.desc
-trending_tvshows_url = f'{TMDB_BASE_URL}/discover/tv?without_genres=10766|10763|10767|10768|99&with_type=4|5|6&certification.lte=15&certification_country=GB&include_adult=false&include_video=false&with_origin_country=US|GB&language=en-US&region=GB&sort_by=popularity.desc&vote_average.gte=6&vote_count.gte=10&watch_region=GB&first_air_date.gte={max_air_date}&first_air_date.lte={tmdb_date}'   #&sort_by=first_air_date.desc&first_air_date.gte={max_air_date}&include_null_first_air_dates=false
+trending_movies_url = f'{TMDB_BASE_URL}/discover/movie?without_genres=27|99&with_release_type=4|5|6&certification.lte=15&certification_country=GB&include_adult=false&include_video=false&language=en-US&region=GB&sort_by=popularity.desc&vote_average.gte=6&vote_count.gte=10&watch_region=GB&release_date.gte={max_air_date}&release_date.lte={tmdb_date}'    #&with_origin_country=US|GB&sort_by=primary_release_date.desc
+trending_tvshows_url = f'{TMDB_BASE_URL}/discover/tv?without_genres=10766|10763|10767|10768|99&with_type=4|5|6&certification.lte=15&certification_country=GB&include_adult=false&include_video=false&language=en-US&region=GB&sort_by=popularity.desc&vote_average.gte=6&vote_count.gte=10&watch_region=GB&first_air_date.gte={max_air_date}&first_air_date.lte={tmdb_date}'   #&sort_by=first_air_date.desc&first_air_date.gte={max_air_date}&include_null_first_air_dates=false
 
 # Fetch more than required to allow filtering
 initial_fetch_count = numberofmovies + 10  # Fetch 15 to get at least 5 valid ones
