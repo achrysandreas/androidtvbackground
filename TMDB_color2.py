@@ -130,7 +130,7 @@ def get_movie_watch_providers_loop(movie_id):
         regional_data = data.get("results", {}).get(TARGET_REGION, {})
         
         # List fields we want to check (like categories of streaming/buying)
-        categories = ["flatrate", "free", "buy", "rent"]    # ["flatrate", "buy", "rent", "free"]
+        categories = ["flatrate", "free"]    # ["flatrate", "buy", "rent", "free"]
         
         # Deep nested wildcard extraction:
         # 1. Loop through each category key in our list
