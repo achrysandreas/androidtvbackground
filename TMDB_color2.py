@@ -442,7 +442,7 @@ def generate_background_fast(input_img, target_width=3840):
         fade_ratio=0.5,
         fade_power=1.75,
         position="bottom-left",
-        offset_left=0-w/2,
+        offset_left=0-w/3,    #0
         offset_bottom=h/5    #150
     )
     mask = mask.filter(ImageFilter.GaussianBlur(radius=60))
