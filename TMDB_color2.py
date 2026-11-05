@@ -373,8 +373,9 @@ def vignette_side(h, w, fade_ratio=5, fade_power=5.0, position="bottom-left", of
     offset_left / offset_bottom allow shifting the start of the fade inward in pixels.
     """
     y, x = np.ogrid[0:h, 0:w]
-    rx, ry = w * (fade_ratio * 2), h * fade_ratio
-
+    #rx, ry = w * fade_ratio, h * fade_ratio
+    rx, ry = w * (fade_ratio * 1.5), h * fade_ratio    
+    
     dist_x, dist_y = np.ones_like(x, dtype=np.float32), np.ones_like(y, dtype=np.float32)
 
     if "left" in position:
