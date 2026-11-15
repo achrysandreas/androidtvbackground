@@ -552,7 +552,7 @@ def process_image(image_url, title, is_movie, genre, year, rating, duration=None
             genre_text = genre
             additional_info = f"{seasons} {'Season' if seasons == 1 else 'Seasons'}"
 
-        rating_text = "TMDB: " + str(rating)
+        rating_text = "TMDB " + str(rating)
         year_text = truncate(str(year), 7)
         info_text = f"{genre_text}  •  {year_text}  •  {additional_info}  •  {rating_text}"
 
