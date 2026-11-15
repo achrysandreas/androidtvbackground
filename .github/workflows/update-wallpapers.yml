@@ -1,0 +1,59 @@
+name: Update Overflight Wallpapers JSON
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'tmdb_backgrounds2/**'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-json:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Generate wallpapers.json
+        env:
+          REPO: ${{ github.repository }}
+          BRANCH: ${{ github.ref_name }}
+        run: |
+          python3 -c '
+          import os, json, urllib.parse
+
+          repo = os.environ["REPO"]
+          branch = os.environ["BRANCH"]
+          folder = "tmdb_backgrounds_2"
+          extensions = (".jpg", ".jpeg", ".png", ".webp")
+          items = []
+
+          if os.path.exists(folder):
+              for filename in sorted(os.listdir(folder)):
+                  if filename.lower().endswith(extensions):
+                      encoded_name = urllib.parse.quote(filename)
+                      raw_url = f"https://githubusercontent.com{repo}/{branch}/{folder}/{encoded_name}"
+                      title = os.path.splitext(filename)[0].replace("_", " ").replace("-", " ").title()
+                      items.append({
+                          "title": title,
+                          "author": "GitHub Wallpaper Feed",
+                          "url_img": raw_url
+                      })
+
+          with open("wallpapers.json", "w", encoding="utf-8") as f:
+              json.dump(items, f, indent=2)
+          '
+
+      - name: Commit and push wallpapers.json
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@://github.com"
+          git add wallpapers.json
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: update wallpapers.json"
+            git push
+          fi
