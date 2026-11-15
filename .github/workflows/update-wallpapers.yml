@@ -28,7 +28,7 @@ jobs:
 
           repo = os.environ["REPO"]
           branch = os.environ["BRANCH"]
-          folder = "tmdb_backgrounds_2"
+          folder = "tmdb_backgrounds2"
           extensions = (".jpg", ".jpeg", ".png", ".webp")
           items = []
 
