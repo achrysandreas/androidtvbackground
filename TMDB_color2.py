@@ -41,7 +41,7 @@ movie_excluded_genres = ['Horror']  #  'Horror' would filter all us horror movie
 excluded_keywords = []  # like ['adult']
 
 # Filter movies by release date and TV shows by last air date
-max_air_date = datetime.now() - timedelta(days=90)  # specify the number of days since the movie release or the TV show last air date, shows before this date will be excluded
+max_air_date = datetime.now() - timedelta(days=180)  # specify the number of days since the movie release or the TV show last air date, shows before this date will be excluded
 
 # Save font locally
 #truetype_url = 'https://github.com/googlefonts/roboto/raw/main/src/hinted/Roboto-Regular.ttf'
