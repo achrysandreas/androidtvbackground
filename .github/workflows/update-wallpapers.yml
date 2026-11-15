@@ -41,7 +41,7 @@ jobs:
                       items.append({
                           "title": title,
                           "author": "GitHub Wallpaper Feed",
-                          "url_4k": raw_url
+                          "url_img": raw_url
                       })
 
           with open("wallpapers.json", "w", encoding="utf-8") as f:
