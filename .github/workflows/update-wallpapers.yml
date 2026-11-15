@@ -6,6 +6,10 @@ on:
       - main
     paths:
       - 'tmdb_backgrounds2/**'
+  workflow_run:
+    workflows: ["Generate TMDB Backgrounds 2"]
+    types:
+      - completed
   workflow_dispatch:
 
 permissions:
