@@ -36,7 +36,7 @@ jobs:
               for filename in sorted(os.listdir(folder)):
                   if filename.lower().endswith(extensions):
                       encoded_name = urllib.parse.quote(filename)
-                      raw_url = f"https://githubusercontent.com{repo}/{branch}/{folder}/{encoded_name}"
+                      raw_url = f"https://raw.githubusercontent.com/{repo}/{branch}/{folder}/{encoded_name}"
                       title = os.path.splitext(filename)[0].replace("_", " ").replace("-", " ").title()
                       items.append({
                           "title": title,
