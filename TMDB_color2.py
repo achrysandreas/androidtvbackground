@@ -512,7 +512,13 @@ def build_tmdb_image_url(file_path):
   return f"https://image.tmdb.org/t/p/original{clean_path}"
 
 
-LIGHT_THRESHOLD = 155  # Combined score threshold (0-255); passes white, pastels, and vibrant neons while blocking darks & dull grays
+LIGHT_NEUTRAL_THRESHOLD = (
+    195  # Minimum brightness for white/silver/grey logos (0-255)
+)
+LIGHT_COLOR_THRESHOLD = (
+    155  # Minimum blended brightness for neon/colored logos (0-255)
+)
+SATURATION_CUTOFF = 40  # Below this = neutral grey/white; above this = colored
 
 
 def get_light_logo_score(file_path):
@@ -540,24 +546,26 @@ def get_light_logo_score(file_path):
     g_vis = g_arr[visible_mask]
     b_vis = b_arr[visible_mask]
 
-    # 1. Perceived luminance (how bright the human eye sees the tone)
+    # 1. Perceived luminance & peak channel brightness
     luminance = 0.299 * r_vis + 0.587 * g_vis + 0.114 * b_vis
     avg_luminance = float(np.mean(luminance))
 
-    # 2. Peak channel brightness (HSV 'Value' — stays 255 for vibrant neons)
     rgb_max = np.maximum(np.maximum(r_vis, g_vis), b_vis)
     rgb_min = np.minimum(np.minimum(r_vis, g_vis), b_vis)
     avg_peak = float(np.mean(rgb_max))
+    avg_saturation = float(np.mean(rgb_max - rgb_min))
 
-    # Blend 60% perceived luminance + 40% peak channel brightness
     effective_brightness = (0.6 * avg_luminance) + (0.4 * avg_peak)
 
-    if effective_brightness < LIGHT_THRESHOLD:
-      return -1
+    # 2. Apply stricter brightness bar if the logo is neutral/greyscale
+    if avg_saturation < SATURATION_CUTOFF:
+      if avg_luminance < LIGHT_NEUTRAL_THRESHOLD:
+        return -1
+    else:
+      if effective_brightness < LIGHT_COLOR_THRESHOLD:
+        return -1
 
-    # Slight preference for cleaner whites when both white and colored logos exist
-    avg_saturation = float(np.mean(rgb_max - rgb_min))
-    return effective_brightness - (0.10 * avg_saturation)
+    return effective_brightness
 
   except Exception as e:
     print(f"[Logo Score Error] URL={url} | Error={e}")
