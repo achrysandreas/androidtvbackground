@@ -496,19 +496,16 @@ def clean_filename(filename):
 
 ######
 
-WHITE_THRESHOLD = (
-    220  # Minimum brightness (0-255) to be considered already "white"
-)
-MAX_SATURATION = (
-    30  # Maximum allowed color difference (0-255); 0 = pure grayscale/white
-)
-FALLBACK_DIR = "fallback_logos"  # Directory to save converted white logos
+# Minimum perceived brightness (0-255) for an original logo to be readable on dark backgrounds.
+# 175 allows pure white (255), light gray/silver (~190), gold/yellow (~210), and light pastels,
+# while rejecting dark navy, dark red, black, and muddy colors.
+LIGHT_THRESHOLD = 175
 
 
-def is_logo_white(file_path):
+def get_light_logo_score(file_path):
   """
-    Downloads w300 thumbnail and returns a whiteness score (0-255) if the logo
-    is genuinely white/light-gray, or -1 if it is dark or colored.
+    Downloads w300 thumbnail and evaluates how well the original logo shows up on dark backgrounds.
+    Returns a score > 0 if it is sufficiently light, or -1 if it is too dark.
     """
   if not file_path or file_path.endswith(".svg"):
     return -1
@@ -533,39 +530,32 @@ def is_logo_white(file_path):
 
     r_vis, g_vis, b_vis = r[visible_mask], g[visible_mask], b[visible_mask]
 
-    # 1. Brightness check (luminance)
+    # Perceived brightness (luminance) on a 0-255 scale
     luminance = 0.299 * r_vis + 0.587 * g_vis + 0.114 * b_vis
     avg_brightness = float(np.mean(luminance))
 
-    # 2. Colorfulness / Saturation check (spread between highest and lowest RGB channel)
+    # Reject if too dark to read clearly on dark backgrounds
+    if avg_brightness < LIGHT_THRESHOLD:
+      return -1
+
+    # Small penalty for heavy saturation so pure white/silver ranks slightly above
+    # bright neon colors of equal brightness, without disqualifying light colored logos
     rgb_max = np.maximum(np.maximum(r_vis, g_vis), b_vis)
     rgb_min = np.minimum(np.minimum(r_vis, g_vis), b_vis)
     avg_saturation = float(np.mean(rgb_max - rgb_min))
 
-    # Reject if too dark OR too colorful (e.g. bright yellow, cyan, pink)
-    if avg_brightness < WHITE_THRESHOLD or avg_saturation > MAX_SATURATION:
-      return -1
-
-    # Return a combined whiteness score (higher brightness + lower saturation = better)
-    return avg_brightness - avg_saturation
+    return avg_brightness - (0.15 * avg_saturation)
 
   except Exception:
     return -1
 
 
-def convert_logo_to_white(file_path, output_dir=FALLBACK_DIR):
-  """Downloads the original logo, turns all visible pixels pure white, and saves it locally."""
+def convert_logo_to_white(file_path):
+  """Downloads the original logo, turns all visible pixels pure white, and returns a PIL Image."""
   if not file_path or file_path.endswith(".svg"):
-    return file_path
+    return None
 
-  os.makedirs(output_dir, exist_ok=True)
-  filename = os.path.basename(file_path)
-  local_path = os.path.join(output_dir, filename)
-
-  if os.path.exists(local_path):
-    return local_path
-
-  url = f"https://tmdb.org{file_path}"
+  url = f"https://image.tmdb.org/t/p/original{file_path}"
   try:
     res = requests.get(url, timeout=10)
     res.raise_for_status()
@@ -578,39 +568,41 @@ def convert_logo_to_white(file_path, output_dir=FALLBACK_DIR):
     data[:, :, 1] = 255
     data[:, :, 2] = 255
 
-    white_img = Image.fromarray(data, "RGBA")
-    white_img.save(local_path, "PNG")
-    return local_path
+    return Image.fromarray(data, "RGBA")
   except Exception:
-    return file_path
+    return None
 
 
-def pick_whitest_logo(logo_list):
-  """Returns a true white logo file_path, converting the top-rated logo to white if none exist."""
+def pick_best_light_logo(logo_list):
+  """
+    Picks the best light-colored original TMDB logo if one exists.
+    Only converts the highest-rated logo to white if all logos are too dark.
+    """
   if not logo_list:
     return None
 
-  valid_white_logos = []
+  light_candidates = []
   for logo in logo_list:
     fp = logo.get("file_path")
-    score = is_logo_white(fp)
+    score = get_light_logo_score(fp)
     if score > 0:
-      valid_white_logos.append((score, logo.get("vote_average", 0), fp))
+      light_candidates.append((score, logo.get("vote_average", 0), fp))
 
-  # 1. If one or more genuine white logos exist, pick the best one
-  if valid_white_logos:
-    valid_white_logos.sort(key=lambda x: (round(x[0] / 5), x[1]), reverse=True)
-    return valid_white_logos[0][2]
+  # 1. Original light-colored logo found: return its TMDB file_path directly
+  if light_candidates:
+    # Group similar brightness scores (buckets of 10) so higher-voted logos win ties
+    light_candidates.sort(key=lambda x: (round(x / 10), x), reverse=True)
+    return light_candidates
 
-  # 2. Fallback: Pick the highest-rated logo overall and convert it to pure white locally
+  # 2. Fallback: All logos are dark—convert the highest-rated logo to pure white
   highest_rated_fp = sorted(
       logo_list, key=lambda x: x.get("vote_average", 0), reverse=True
-  )[0]["file_path"]
+  )["file_path"]
   return convert_logo_to_white(highest_rated_fp)
 
 
 def get_logo(media_type, media_id, language):
-  lang_code = language.split("-")[0]
+  lang_code = language.split("-")
 
   url = f"{TMDB_BASE_URL}/{media_type}/{media_id}/images?language={lang_code}"
   response = requests.get(url, headers=headers)
@@ -626,16 +618,16 @@ def get_logo(media_type, media_id, language):
     if response_en.status_code == 200:
       logos_en = response_en.json().get("logos", [])
       if logos_en:
-        return pick_whitest_logo(logos_en)
+        return pick_best_light_logo(logos_en)
     return None
 
   # 1. Exact match for requested language
   lang_match = [l for l in logos if l.get("iso_639_1") == lang_code]
   if lang_match:
-    return pick_whitest_logo(lang_match)
+    return pick_best_light_logo(lang_match)
 
-  # 2. Last fallback: whitest logo overall
-  return pick_whitest_logo(logos)
+  # 2. Last fallback: best light logo overall
+  return pick_best_light_logo(logos)
 
 
 ######
@@ -713,20 +705,49 @@ def process_image(image_url, title, is_movie, genre, year, rating, duration=None
 
         logo_drawn = False
 
+####
+                
         if logo_path:
+          try:
+            # Case 1: Fallback already converted and returned a PIL Image in memory
+            if isinstance(logo_result, Image.Image):
+              logo_image = logo_result
+        
+            # Case 2: Original light logo found on TMDB (returned as a file_path string)
+            else:
+              logo_url = f"https://image.tmdb.org/t/p/original{logo_result}"
+              logo_response = requests.get(logo_url, timeout=10)
+              if logo_response.status_code != 200:
+                raise Exception(
+                    f"HTTP {logo_response.status_code} fetching {logo_url}"
+                )
+              logo_image = Image.open(BytesIO(logo_response.content))
+        
+            # Resize and paste onto your background just like before
+            logo_image = resize_logo(logo_image, 1000, 500)
+            logo_position = (210, info_position[1] - logo_image.height - 24)
+            logo_image = logo_image.convert("RGBA")
+            bckg.paste(logo_image, logo_position, logo_image)
+            logo_drawn = True
+        
+          except Exception as e:
+            print(f"Failed to draw logo for {title}: {e}")
+
+####
+        
+#        if logo_path:
 #            logo_url = f"https://image.tmdb.org/t/p/original{logo_path}"
-            logo_url = f"file://{os.path.abspath(logo_path)}"
-            logo_response = requests.get(logo_url)
-            if logo_response.status_code == 200:
-                try:
-                    logo_image = Image.open(BytesIO(logo_response.content))
-                    logo_image = resize_logo(logo_image, 1000, 500)
-                    logo_position = (210, info_position[1] - logo_image.height - 24)
-                    logo_image = logo_image.convert('RGBA')
-                    bckg.paste(logo_image, logo_position, logo_image)
-                    logo_drawn = True
-                except Exception as e:
-                    print(f"Failed to draw logo for {title}: {e}")
+#            logo_response = requests.get(logo_url)
+#            if logo_response.status_code == 200:
+#                try:
+#                    logo_image = Image.open(BytesIO(logo_response.content))
+#                    logo_image = resize_logo(logo_image, 1000, 500)
+#                    logo_position = (210, info_position[1] - logo_image.height - 24)
+#                    logo_image = logo_image.convert('RGBA')
+#                    bckg.paste(logo_image, logo_position, logo_image)
+#                    logo_drawn = True
+#                except Exception as e:
+#                    print(f"Failed to draw logo for {title}: {e}")
 
         if not logo_drawn:
             draw.text((title_position[0] + shadow_offset, title_position[1] + shadow_offset),
