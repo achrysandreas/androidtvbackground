@@ -513,12 +513,15 @@ def build_tmdb_image_url(file_path):
 
 
 LIGHT_NEUTRAL_THRESHOLD = (
-    195  # Minimum brightness for white/silver/grey logos (0-255)
+    195  # Minimum average brightness for neutral white/silver logos (0-255)
 )
 LIGHT_COLOR_THRESHOLD = (
     155  # Minimum blended brightness for neon/colored logos (0-255)
 )
 SATURATION_CUTOFF = 40  # Below this = neutral grey/white; above this = colored
+MIN_DARK_QUARTILE = (
+    115  # Reject if the darkest 25% of visible pixels average below this (0-255)
+)
 
 
 def get_light_logo_score(file_path):
@@ -546,18 +549,24 @@ def get_light_logo_score(file_path):
     g_vis = g_arr[visible_mask]
     b_vis = b_arr[visible_mask]
 
-    # 1. Perceived luminance & peak channel brightness
+    # Per-pixel perceived luminance & peak channel brightness
     luminance = 0.299 * r_vis + 0.587 * g_vis + 0.114 * b_vis
-    avg_luminance = float(np.mean(luminance))
-
     rgb_max = np.maximum(np.maximum(r_vis, g_vis), b_vis)
     rgb_min = np.minimum(np.minimum(r_vis, g_vis), b_vis)
-    avg_peak = float(np.mean(rgb_max))
+
+    # Per-pixel blended brightness
+    pixel_brightness = (0.6 * luminance) + (0.4 * rgb_max)
+
+    # 1. Bottom-quartile check: catch logos with dark grey sections/subtitles alongside bright colors
+    dark_quartile = float(np.percentile(pixel_brightness, 25))
+    if dark_quartile < MIN_DARK_QUARTILE:
+      return -1
+
+    # 2. Overall average checks
+    avg_luminance = float(np.mean(luminance))
     avg_saturation = float(np.mean(rgb_max - rgb_min))
+    effective_brightness = float(np.mean(pixel_brightness))
 
-    effective_brightness = (0.6 * avg_luminance) + (0.4 * avg_peak)
-
-    # 2. Apply stricter brightness bar if the logo is neutral/greyscale
     if avg_saturation < SATURATION_CUTOFF:
       if avg_luminance < LIGHT_NEUTRAL_THRESHOLD:
         return -1
