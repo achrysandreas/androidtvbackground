@@ -713,8 +713,6 @@ def process_image(image_url, title, is_movie, genre, year, rating, duration=None
 
         logo_drawn = False
 
-        logo_path = get_logo(media_type, media_id, language)
-
         if logo_path:
 #            logo_url = f"https://image.tmdb.org/t/p/original{logo_path}"
             logo_url = f"file://{os.path.abspath(logo_path)}"
