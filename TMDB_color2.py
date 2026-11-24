@@ -516,7 +516,7 @@ LIGHT_NEUTRAL_THRESHOLD = (
     210 #200  # Minimum average brightness for neutral white/silver logos (0-255) - Log: eff
 )
 LIGHT_COLOR_THRESHOLD = (
-    220 #155  # Minimum blended brightness for neon/colored logos (0-255) - Log: lum
+    165 #155  # Minimum blended brightness for neon/colored logos (0-255) - Log: lum
 )
 SATURATION_CUTOFF = 40  # Below this = neutral grey/white; above this = colored - Log: sat
 DARK_PIXEL_LIMIT = 140  # Any pixel below this brightness counts as "dark/dull"
