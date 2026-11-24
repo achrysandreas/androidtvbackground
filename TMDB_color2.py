@@ -584,29 +584,29 @@ def convert_logo_to_white(file_path):
 
 
 def pick_best_light_logo(logo_list):
+  """
+    Checks logos in order of highest TMDB rating and returns the first one
+    that meets LIGHT_THRESHOLD. Falls back to converting the top-rated logo to white.
+    """
   if not logo_list:
     return None
 
-  light_candidates = []
-  for logo in logo_list:
+  # Sort by TMDB vote_average descending so we check the highest-rated logos first
+  sorted_logos = sorted(
+      logo_list, key=lambda item: item.get("vote_average", 0), reverse=True
+  )
+
+  # 1. Return immediately on the first logo that passes the lightness threshold
+  for logo in sorted_logos:
     fp = logo.get("file_path")
     score = get_light_logo_score(fp)
     if score > 0:
-      light_candidates.append((score, logo.get("vote_average", 0), fp))
+      full_url = build_tmdb_image_url(fp)
+      print(f"[Logo Selected] First light original: {full_url} (score={score:.1f})")
+      return full_url
 
-  # 1. Original light-colored logo found: return its full URL
-  if light_candidates:
-    best_candidate = max(
-        light_candidates,
-        key=lambda item: (round(next(iter(item)) / 10), list(item).pop(1)),
-    )
-    best_score, _, best_fp = best_candidate
-    full_url = build_tmdb_image_url(best_fp)
-    print(f"[Logo Selected] Light original: {full_url} (score={best_score:.1f})")
-    return full_url
-
-  # 2. Fallback: All logos are dark—convert the highest-rated logo to pure white
-  best_dark_logo = max(logo_list, key=lambda item: item.get("vote_average", 0))
+  # 2. Fallback: None passed—convert the highest-rated logo (first in sorted_logos) to white
+  best_dark_logo = next(iter(sorted_logos))
   dark_fp = best_dark_logo.get("file_path")
   print(f"[Logo Selected] Converting dark logo to white: {build_tmdb_image_url(dark_fp)}")
   return convert_logo_to_white(dark_fp)
