@@ -702,12 +702,12 @@ def process_image(image_url, title, is_movie, genre, year, rating, duration=None
         if logo_path:
           try:
             # Case 1: Fallback already converted and returned a PIL Image in memory
-            if isinstance(logo_result, Image.Image):
-              logo_image = logo_result
+            if isinstance(logo_path, Image.Image):
+              logo_image = logo_path
         
             # Case 2: Original light logo found on TMDB (returned as a file_path string)
             else:
-              logo_url = f"https://image.tmdb.org/t/p/original{logo_result}"
+              logo_url = f"https://image.tmdb.org/t/p/original{logo_path}"
               logo_response = requests.get(logo_url, timeout=10)
               if logo_response.status_code != 200:
                 raise Exception(
