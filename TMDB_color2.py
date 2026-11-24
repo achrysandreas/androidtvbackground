@@ -577,9 +577,9 @@ def pick_whitest_logo(logo_list):
     brightness = get_logo_brightness(fp)
     scored_logos.append((brightness, logo.get("vote_average", 0), fp))
 
-  # Sort by brightness bucket first, then vote_average
-  scored_logos.sort(key=lambda x: (round(x / 5), x), reverse=True)
-  best_brightness, _, best_fp = scored_logos
+  # Sort by brightness bucket (x[0]) first, then vote_average (x[1])
+  scored_logos.sort(key=lambda x: (round(x[0] / 5), x[1]), reverse=True)
+  best_brightness, _, best_fp = scored_logos[0]
 
   # 1. If the brightest logo meets the white threshold, return its TMDB path
   if best_brightness >= WHITE_THRESHOLD:
@@ -588,13 +588,13 @@ def pick_whitest_logo(logo_list):
   # 2. Fallback: Pick the highest-rated logo overall and convert it to white locally
   highest_rated_fp = sorted(
       logo_list, key=lambda x: x.get("vote_average", 0), reverse=True
-  )["file_path"]
+  )[0]["file_path"]
   return convert_logo_to_white(highest_rated_fp)
 
 
 def get_logo(media_type, media_id, language):
   # Prepare language code (fr-FR -> fr)
-  lang_code = language.split("-")
+  lang_code = language.split("-")[0]
 
   # Build TMDB API URL
   url = f"{TMDB_BASE_URL}/{media_type}/{media_id}/images?language={lang_code}"
@@ -621,7 +621,6 @@ def get_logo(media_type, media_id, language):
 
   # 2. Last fallback: whitest logo overall
   return pick_whitest_logo(logos)
-
 
 ######
 
