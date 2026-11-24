@@ -496,14 +496,12 @@ def clean_filename(filename):
 
 ###### START
 
-logo_result = get_logo(media_type, media_id, language)
-
-if logo_result:
+if logo_path:
   try:
-    if isinstance(logo_result, Image.Image):
-      logo_image = logo_result
+    if isinstance(logo_path, Image.Image):
+      logo_image = logo_path
     else:
-      logo_url = f"https://tmdb.org{logo_result}"
+      logo_url = f"https://tmdb.org{logo_path}"
       logo_response = requests.get(logo_url, timeout=10)
       if logo_response.status_code != 200:
         raise Exception(
@@ -520,7 +518,6 @@ if logo_result:
 
   except Exception as e:
     print(f"Failed to draw logo for {title}: {e}")
-
 
 ###### END
 
