@@ -497,13 +497,19 @@ def clean_filename(filename):
 ######
 
 WHITE_THRESHOLD = (
-    200  # Minimum brightness (0-255) to be considered already "white"
+    220  # Minimum brightness (0-255) to be considered already "white"
+)
+MAX_SATURATION = (
+    30  # Maximum allowed color difference (0-255); 0 = pure grayscale/white
 )
 FALLBACK_DIR = "fallback_logos"  # Directory to save converted white logos
 
 
-def get_logo_brightness(file_path):
-  """Downloads w300 thumbnail and calculates average brightness of visible pixels (0-255)."""
+def is_logo_white(file_path):
+  """
+    Downloads w300 thumbnail and returns a whiteness score (0-255) if the logo
+    is genuinely white/light-gray, or -1 if it is dark or colored.
+    """
   if not file_path or file_path.endswith(".svg"):
     return -1
 
@@ -515,18 +521,34 @@ def get_logo_brightness(file_path):
     img = Image.open(BytesIO(res.content)).convert("RGBA")
     data = np.array(img)
 
-    r, g, b, a = data[:, :, 0], data[:, :, 1], data[:, :, 2], data[:, :, 3]
-    visible_mask = a > 50  # Ignore transparent background pixels
+    r = data[:, :, 0].astype(float)
+    g = data[:, :, 1].astype(float)
+    b = data[:, :, 2].astype(float)
+    a = data[:, :, 3]
 
+    # Ignore transparent and faint anti-aliased edge pixels
+    visible_mask = a > 100
     if not np.any(visible_mask):
       return -1
 
-    luminance = (
-        0.299 * r[visible_mask]
-        + 0.587 * g[visible_mask]
-        + 0.114 * b[visible_mask]
-    )
-    return float(np.mean(luminance))
+    r_vis, g_vis, b_vis = r[visible_mask], g[visible_mask], b[visible_mask]
+
+    # 1. Brightness check (luminance)
+    luminance = 0.299 * r_vis + 0.587 * g_vis + 0.114 * b_vis
+    avg_brightness = float(np.mean(luminance))
+
+    # 2. Colorfulness / Saturation check (spread between highest and lowest RGB channel)
+    rgb_max = np.maximum(np.maximum(r_vis, g_vis), b_vis)
+    rgb_min = np.minimum(np.minimum(r_vis, g_vis), b_vis)
+    avg_saturation = float(np.mean(rgb_max - rgb_min))
+
+    # Reject if too dark OR too colorful (e.g. bright yellow, cyan, pink)
+    if avg_brightness < WHITE_THRESHOLD or avg_saturation > MAX_SATURATION:
+      return -1
+
+    # Return a combined whiteness score (higher brightness + lower saturation = better)
+    return avg_brightness - avg_saturation
+
   except Exception:
     return -1
 
@@ -540,7 +562,6 @@ def convert_logo_to_white(file_path, output_dir=FALLBACK_DIR):
   filename = os.path.basename(file_path)
   local_path = os.path.join(output_dir, filename)
 
-  # Return cached version if already converted
   if os.path.exists(local_path):
     return local_path
 
@@ -561,31 +582,27 @@ def convert_logo_to_white(file_path, output_dir=FALLBACK_DIR):
     white_img.save(local_path, "PNG")
     return local_path
   except Exception:
-    # If conversion fails, fall back to the original TMDB file_path
     return file_path
 
 
 def pick_whitest_logo(logo_list):
-  """Returns a white logo file_path, converting the top-rated logo to white if none exist."""
+  """Returns a true white logo file_path, converting the top-rated logo to white if none exist."""
   if not logo_list:
     return None
 
-  # Evaluate brightness for each candidate
-  scored_logos = []
+  valid_white_logos = []
   for logo in logo_list:
     fp = logo.get("file_path")
-    brightness = get_logo_brightness(fp)
-    scored_logos.append((brightness, logo.get("vote_average", 0), fp))
+    score = is_logo_white(fp)
+    if score > 0:
+      valid_white_logos.append((score, logo.get("vote_average", 0), fp))
 
-  # Sort by brightness bucket (x[0]) first, then vote_average (x[1])
-  scored_logos.sort(key=lambda x: (round(x[0] / 5), x[1]), reverse=True)
-  best_brightness, _, best_fp = scored_logos[0]
+  # 1. If one or more genuine white logos exist, pick the best one
+  if valid_white_logos:
+    valid_white_logos.sort(key=lambda x: (round(x[0] / 5), x[1]), reverse=True)
+    return valid_white_logos[0][2]
 
-  # 1. If the brightest logo meets the white threshold, return its TMDB path
-  if best_brightness >= WHITE_THRESHOLD:
-    return best_fp
-
-  # 2. Fallback: Pick the highest-rated logo overall and convert it to white locally
+  # 2. Fallback: Pick the highest-rated logo overall and convert it to pure white locally
   highest_rated_fp = sorted(
       logo_list, key=lambda x: x.get("vote_average", 0), reverse=True
   )[0]["file_path"]
@@ -593,10 +610,8 @@ def pick_whitest_logo(logo_list):
 
 
 def get_logo(media_type, media_id, language):
-  # Prepare language code (fr-FR -> fr)
   lang_code = language.split("-")[0]
 
-  # Build TMDB API URL
   url = f"{TMDB_BASE_URL}/{media_type}/{media_id}/images?language={lang_code}"
   response = requests.get(url, headers=headers)
   if response.status_code != 200:
@@ -621,6 +636,7 @@ def get_logo(media_type, media_id, language):
 
   # 2. Last fallback: whitest logo overall
   return pick_whitest_logo(logos)
+
 
 ######
 
