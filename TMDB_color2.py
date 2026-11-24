@@ -513,15 +513,15 @@ def build_tmdb_image_url(file_path):
 
 
 LIGHT_NEUTRAL_THRESHOLD = (
-    200  # Minimum average brightness for neutral white/silver logos (0-255) - Log: eff
+    210 #200  # Minimum average brightness for neutral white/silver logos (0-255) - Log: eff
 )
 LIGHT_COLOR_THRESHOLD = (
-    155  # Minimum blended brightness for neon/colored logos (0-255) - Log: lum
+    220 #155  # Minimum blended brightness for neon/colored logos (0-255) - Log: lum
 )
 SATURATION_CUTOFF = 40  # Below this = neutral grey/white; above this = colored - Log: sat
 DARK_PIXEL_LIMIT = 140  # Any pixel below this brightness counts as "dark/dull"
 MAX_DARK_PIXEL_RATIO = (
-    0.18  # Reject if more than 8% of visible pixels are dark/dull - Log: dark %
+    0.03 #0.18  # Reject if more than 8% of visible pixels are dark/dull - Log: dark %
 )
 
 
