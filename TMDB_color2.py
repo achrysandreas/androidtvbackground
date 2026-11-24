@@ -494,30 +494,140 @@ def clean_filename(filename):
 #    # 4. Last fallback: best-rated logo overall
 #    return sorted(logos, key=lambda x: x.get("vote_average", 0), reverse=True)[0]["file_path"]
 
-###### START
+###### START UPDATED LOGO FUNCTIONS
 
-if logo_path:
+from io import BytesIO
+import numpy as np
+from PIL import Image
+import requests
+
+LIGHT_THRESHOLD = 175
+
+
+def get_light_logo_score(file_path):
+  """
+    Downloads w300 thumbnail and evaluates how well the original logo shows up on dark backgrounds.
+    Returns a score > 0 if it is sufficiently light, or -1 if it is too dark.
+    """
+  if not file_path or file_path.endswith(".svg"):
+    return -1
+
+  url = f"https://tmdb.org{file_path}"
   try:
-    if isinstance(logo_path, Image.Image):
-      logo_image = logo_path
-    else:
-      logo_url = f"https://tmdb.org{logo_path}"
-      logo_response = requests.get(logo_url, timeout=10)
-      if logo_response.status_code != 200:
-        raise Exception(
-            f"HTTP {logo_response.status_code} fetching {logo_url}"
-        )
-      logo_image = Image.open(BytesIO(logo_response.content))
+    res = requests.get(url, timeout=5)
+    res.raise_for_status()
 
-    logo_image = resize_logo(logo_image, 1000, 500)
-    _, info_y = info_position
-    logo_position = (210, info_y - logo_image.height - 24)
-    logo_image = logo_image.convert("RGBA")
-    bckg.paste(logo_image, logo_position, logo_image)
-    logo_drawn = True
+    img = Image.open(BytesIO(res.content)).convert("RGBA")
+    r, g, b, a = img.split()
+
+    r_arr = np.array(r, dtype=float)
+    g_arr = np.array(g, dtype=float)
+    b_arr = np.array(b, dtype=float)
+    a_arr = np.array(a)
+
+    visible_mask = a_arr > 100
+    if not np.any(visible_mask):
+      return -1
+
+    r_vis = r_arr[visible_mask]
+    g_vis = g_arr[visible_mask]
+    b_vis = b_arr[visible_mask]
+
+    luminance = 0.299 * r_vis + 0.587 * g_vis + 0.114 * b_vis
+    avg_brightness = float(np.mean(luminance))
+
+    if avg_brightness < LIGHT_THRESHOLD:
+      return -1
+
+    rgb_max = np.maximum(np.maximum(r_vis, g_vis), b_vis)
+    rgb_min = np.minimum(np.minimum(r_vis, g_vis), b_vis)
+    avg_saturation = float(np.mean(rgb_max - rgb_min))
+
+    return avg_brightness - (0.15 * avg_saturation)
 
   except Exception as e:
-    print(f"Failed to draw logo for {title}: {e}")
+    print(f"[Logo Score Error] {file_path}: {e}")
+    return -1
+
+
+def convert_logo_to_white(file_path):
+  """Downloads the original logo, turns all visible pixels pure white, and returns a PIL Image."""
+  if not file_path or file_path.endswith(".svg"):
+    return None
+
+  url = f"https://tmdb.org{file_path}"
+  try:
+    res = requests.get(url, timeout=10)
+    res.raise_for_status()
+
+    img = Image.open(BytesIO(res.content)).convert("RGBA")
+    _, _, _, alpha = img.split()
+    white_img = Image.new("RGBA", img.size, (255, 255, 255, 255))
+    white_img.putalpha(alpha)
+    return white_img
+  except Exception as e:
+    print(f"[Logo Convert Error] {file_path}: {e}")
+    return None
+
+
+def pick_best_light_logo(logo_list):
+  """
+    Returns either a TMDB file_path string (for light logos) or a white PIL Image (fallback).
+    """
+  if not logo_list:
+    return None
+
+  light_candidates = []
+  for logo in logo_list:
+    fp = logo.get("file_path")
+    score = get_light_logo_score(fp)
+    if score > 0:
+      light_candidates.append((score, logo.get("vote_average", 0), fp))
+
+  # 1. Original light-colored logo found: return its file_path string
+  if light_candidates:
+    best_score, best_vote, best_fp = max(
+        light_candidates, key=lambda item: (round(item[0] / 10), item[1])
+    )
+    print(f"[Logo Selected] Light original: {best_fp} (score={best_score:.1f})")
+    return best_fp
+
+  # 2. Fallback: All logos are dark—convert the highest-rated logo to pure white
+  best_dark_logo = max(logo_list, key=lambda item: item.get("vote_average", 0))
+  dark_fp = best_dark_logo.get("file_path")
+  print(f"[Logo Selected] Converting dark logo to white: {dark_fp}")
+  return convert_logo_to_white(dark_fp)
+
+
+def get_logo(media_type, media_id, language):
+  lang_code, _, _ = language.partition("-")
+
+  # Query without ?language= restriction so all language logos are returned for filtering
+  url = f"{TMDB_BASE_URL}/{media_type}/{media_id}/images"
+  response = requests.get(url, headers=headers)
+  if response.status_code != 200:
+    print(f"[TMDB Images Error] {media_type}/{media_id}: HTTP {response.status_code}")
+    return None
+
+  logos = response.json().get("logos", [])
+  if not logos:
+    print(f"[TMDB Images] No logos returned for {media_type}/{media_id}")
+    return None
+
+  # 1. Exact match for requested language (e.g., 'fr' or 'en')
+  lang_match = [l for l in logos if l.get("iso_639_1") == lang_code]
+  if lang_match:
+    return pick_best_light_logo(lang_match)
+
+  # 2. English fallback if requested language wasn't English
+  if lang_code != "en":
+    en_match = [l for l in logos if l.get("iso_639_1") == "en"]
+    if en_match:
+      return pick_best_light_logo(en_match)
+
+  # 3. Last fallback: best light logo overall (including textless/null)
+  return pick_best_light_logo(logos)
+
 
 ###### END
 
@@ -594,7 +704,7 @@ def process_image(image_url, title, is_movie, genre, year, rating, duration=None
 
         logo_drawn = False
 
-#### START
+#### START UPDATED LOGO DRAW
                         
         if logo_path:
           try:
