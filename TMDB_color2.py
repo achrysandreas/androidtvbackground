@@ -496,9 +496,11 @@ def clean_filename(filename):
 
 ######
 
-# Minimum perceived brightness (0-255) for an original logo to be readable on dark backgrounds.
-# 175 allows pure white (255), light gray/silver (~190), gold/yellow (~210), and light pastels,
-# while rejecting dark navy, dark red, black, and muddy colors.
+from io import BytesIO
+import numpy as np
+from PIL import Image
+import requests
+
 LIGHT_THRESHOLD = 175
 
 
@@ -523,23 +525,18 @@ def get_light_logo_score(file_path):
     b = data[:, :, 2].astype(float)
     a = data[:, :, 3]
 
-    # Ignore transparent and faint anti-aliased edge pixels
     visible_mask = a > 100
     if not np.any(visible_mask):
       return -1
 
     r_vis, g_vis, b_vis = r[visible_mask], g[visible_mask], b[visible_mask]
 
-    # Perceived brightness (luminance) on a 0-255 scale
     luminance = 0.299 * r_vis + 0.587 * g_vis + 0.114 * b_vis
     avg_brightness = float(np.mean(luminance))
 
-    # Reject if too dark to read clearly on dark backgrounds
     if avg_brightness < LIGHT_THRESHOLD:
       return -1
 
-    # Small penalty for heavy saturation so pure white/silver ranks slightly above
-    # bright neon colors of equal brightness, without disqualifying light colored logos
     rgb_max = np.maximum(np.maximum(r_vis, g_vis), b_vis)
     rgb_min = np.minimum(np.minimum(r_vis, g_vis), b_vis)
     avg_saturation = float(np.mean(rgb_max - rgb_min))
@@ -555,7 +552,7 @@ def convert_logo_to_white(file_path):
   if not file_path or file_path.endswith(".svg"):
     return None
 
-  url = f"https://image.tmdb.org/t/p/original{file_path}"
+  url = f"https://tmdb.org{file_path}"
   try:
     res = requests.get(url, timeout=10)
     res.raise_for_status()
@@ -563,7 +560,6 @@ def convert_logo_to_white(file_path):
     img = Image.open(BytesIO(res.content)).convert("RGBA")
     data = np.array(img)
 
-    # Set Red, Green, and Blue channels to 255 (pure white), preserving original Alpha channel
     data[:, :, 0] = 255
     data[:, :, 1] = 255
     data[:, :, 2] = 255
@@ -575,8 +571,7 @@ def convert_logo_to_white(file_path):
 
 def pick_best_light_logo(logo_list):
   """
-    Picks the best light-colored original TMDB logo if one exists.
-    Only converts the highest-rated logo to white if all logos are too dark.
+    Returns either a TMDB file_path string (for light logos) or a white PIL Image (fallback).
     """
   if not logo_list:
     return None
@@ -588,21 +583,19 @@ def pick_best_light_logo(logo_list):
     if score > 0:
       light_candidates.append((score, logo.get("vote_average", 0), fp))
 
-  # 1. Original light-colored logo found: return its TMDB file_path directly
+  # 1. Original light-colored logo found: return its file_path string
   if light_candidates:
-    # Group similar brightness scores (buckets of 10) so higher-voted logos win ties
-    light_candidates.sort(key=lambda x: (round(x / 10), x), reverse=True)
-    return light_candidates
+    light_candidates.sort(key=lambda item: (round(item[0] / 10), item[1]), reverse=True)
+    best_candidate = light_candidates[0]
+    return best_candidate[2]  # The file_path string
 
   # 2. Fallback: All logos are dark—convert the highest-rated logo to pure white
-  highest_rated_fp = sorted(
-      logo_list, key=lambda x: x.get("vote_average", 0), reverse=True
-  )["file_path"]
-  return convert_logo_to_white(highest_rated_fp)
+  best_dark_logo = max(logo_list, key=lambda item: item.get("vote_average", 0))
+  return convert_logo_to_white(best_dark_logo.get("file_path"))
 
 
 def get_logo(media_type, media_id, language):
-  lang_code = language.split("-")
+  lang_code = language.split("-")[0]
 
   url = f"{TMDB_BASE_URL}/{media_type}/{media_id}/images?language={lang_code}"
   response = requests.get(url, headers=headers)
@@ -628,7 +621,6 @@ def get_logo(media_type, media_id, language):
 
   # 2. Last fallback: best light logo overall
   return pick_best_light_logo(logos)
-
 
 ######
 
