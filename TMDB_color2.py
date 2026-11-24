@@ -496,8 +496,10 @@ def clean_filename(filename):
 
 ###### START UPDATED LOGO FUNCTIONS
 
-
-LIGHT_THRESHOLD = 175
+# Minimum perceived brightness (0-255) for an original logo to be readable on dark backgrounds.
+# 175 allows pure white (255), light gray/silver (~190), gold/yellow (~210), and light pastels,
+# while rejecting dark navy, dark red, black, and muddy colors.
+LIGHT_THRESHOLD = 100
 
 
 def build_tmdb_image_url(file_path):
