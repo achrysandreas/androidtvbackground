@@ -521,7 +521,7 @@ LIGHT_COLOR_THRESHOLD = (
 SATURATION_CUTOFF = 40  # Below this = neutral grey/white; above this = colored - Log: sat
 DARK_PIXEL_LIMIT = 140  # Any pixel below this brightness counts as "dark/dull"
 MAX_DARK_PIXEL_RATIO = (
-    0.08  # Reject if more than 8% of visible pixels are dark/dull - Log: dark %
+    0.18  # Reject if more than 8% of visible pixels are dark/dull - Log: dark %
 )
 
 
