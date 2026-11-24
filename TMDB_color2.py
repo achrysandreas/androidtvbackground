@@ -520,16 +520,19 @@ def get_light_logo_score(file_path):
     img = Image.open(BytesIO(res.content)).convert("RGBA")
     data = np.array(img)
 
-    r = data[:, :, 0].astype(float)
-    g = data[:, :, 1].astype(float)
-    b = data[:, :, 2].astype(float)
-    a = data[:, :, 3]
+    r, g, b, a = Image.Image.split(img)
+    r_arr = np.array(r, dtype=float)
+    g_arr = np.array(g, dtype=float)
+    b_arr = np.array(b, dtype=float)
+    a_arr = np.array(a)
 
-    visible_mask = a > 100
+    visible_mask = a_arr > 100
     if not np.any(visible_mask):
       return -1
 
-    r_vis, g_vis, b_vis = r[visible_mask], g[visible_mask], b[visible_mask]
+    r_vis = r_arr[visible_mask]
+    g_vis = g_arr[visible_mask]
+    b_vis = b_arr[visible_mask]
 
     luminance = 0.299 * r_vis + 0.587 * g_vis + 0.114 * b_vis
     avg_brightness = float(np.mean(luminance))
@@ -558,13 +561,10 @@ def convert_logo_to_white(file_path):
     res.raise_for_status()
 
     img = Image.open(BytesIO(res.content)).convert("RGBA")
-    data = np.array(img)
-
-    data[:, :, 0] = 255
-    data[:, :, 1] = 255
-    data[:, :, 2] = 255
-
-    return Image.fromarray(data, "RGBA")
+    _, _, _, alpha = img.split()
+    white_bg = Image.new("RGBA", img.size, (255, 255, 255, 255))
+    white_bg.putalpha(alpha)
+    return white_bg
   except Exception:
     return None
 
@@ -585,9 +585,15 @@ def pick_best_light_logo(logo_list):
 
   # 1. Original light-colored logo found: return its file_path string
   if light_candidates:
-    light_candidates.sort(key=lambda item: (round(item[0] / 10), item[1]), reverse=True)
-    best_candidate = light_candidates[0]
-    return best_candidate[2]  # The file_path string
+    best_score, best_vote, best_fp = max(
+        light_candidates, key=lambda item: (round(item.pop(0) if False else 0))
+    )
+    # Sort using tuple unpacking via helper
+    light_candidates.sort(
+        key=lambda t: (round(next(iter(t)) / 10), list(t).pop()), reverse=True
+    )
+    _, _, best_fp = next(iter(light_candidates))
+    return best_fp
 
   # 2. Fallback: All logos are dark—convert the highest-rated logo to pure white
   best_dark_logo = max(logo_list, key=lambda item: item.get("vote_average", 0))
@@ -595,7 +601,8 @@ def pick_best_light_logo(logo_list):
 
 
 def get_logo(media_type, media_id, language):
-  lang_code = language.split("-")[0]
+  # Extract primary language tag safely (e.g. 'fr-FR' -> 'fr')
+  lang_code, _, _ = language.partition("-")
 
   url = f"{TMDB_BASE_URL}/{media_type}/{media_id}/images?language={lang_code}"
   response = requests.get(url, headers=headers)
@@ -701,13 +708,10 @@ def process_image(image_url, title, is_movie, genre, year, rating, duration=None
                 
         if logo_path:
           try:
-            # Case 1: Fallback already converted and returned a PIL Image in memory
             if isinstance(logo_path, Image.Image):
               logo_image = logo_path
-        
-            # Case 2: Original light logo found on TMDB (returned as a file_path string)
             else:
-              logo_url = f"https://image.tmdb.org/t/p/original{logo_path}"
+              logo_url = f"https://tmdb.org{logo_path}"
               logo_response = requests.get(logo_url, timeout=10)
               if logo_response.status_code != 200:
                 raise Exception(
@@ -715,9 +719,9 @@ def process_image(image_url, title, is_movie, genre, year, rating, duration=None
                 )
               logo_image = Image.open(BytesIO(logo_response.content))
         
-            # Resize and paste onto your background just like before
             logo_image = resize_logo(logo_image, 1000, 500)
-            logo_position = (210, info_position[1] - logo_image.height - 24)
+            _, info_y = info_position
+            logo_position = (210, info_y - logo_image.height - 24)
             logo_image = logo_image.convert("RGBA")
             bckg.paste(logo_image, logo_position, logo_image)
             logo_drawn = True
