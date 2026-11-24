@@ -712,8 +712,12 @@ def process_image(image_url, title, is_movie, genre, year, rating, duration=None
             logo_path = get_logo("tv", tvshow['id'], language="en")
 
         logo_drawn = False
+
+        logo_path = get_logo(media_type, media_id, language)
+
         if logo_path:
-            logo_url = f"https://image.tmdb.org/t/p/original{logo_path}"
+#            logo_url = f"https://image.tmdb.org/t/p/original{logo_path}"
+            logo_url = f"file://{os.path.abspath(logo_path)}"
             logo_response = requests.get(logo_url)
             if logo_response.status_code == 200:
                 try:
