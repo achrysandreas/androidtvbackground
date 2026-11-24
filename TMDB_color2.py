@@ -496,24 +496,25 @@ def clean_filename(filename):
 
 ###### START UPDATED LOGO FUNCTIONS
 
-from io import BytesIO
-import numpy as np
-from PIL import Image
-import requests
 
 LIGHT_THRESHOLD = 175
-TMDB_IMAGE_BASE = "https://tmdb.org"
+
+
+def build_tmdb_image_url(file_path):
+  """Ensures every TMDB file_path is converted to a full https://image.tmdb.org/t/p/original URL."""
+  if not file_path:
+    return None
+  if file_path.startswith("http"):
+    return file_path
+  clean_path = file_path if file_path.startswith("/") else f"/{file_path}"
+  return f"https://image.tmdb.org/t/p/original{clean_path}"
 
 
 def get_light_logo_score(file_path):
-  """
-    Downloads the logo from TMDB's image CDN and evaluates how well it shows up on dark backgrounds.
-    Returns a score > 0 if it is sufficiently light, or -1 if it is too dark.
-    """
   if not file_path or file_path.endswith(".svg"):
     return -1
 
-  url = f"{TMDB_IMAGE_BASE}{file_path}"
+  url = build_tmdb_image_url(file_path)
   try:
     res = requests.get(url, timeout=10)
     res.raise_for_status()
@@ -547,16 +548,15 @@ def get_light_logo_score(file_path):
     return avg_brightness - (0.15 * avg_saturation)
 
   except Exception as e:
-    print(f"[Logo Score Error] {file_path}: {e}")
+    print(f"[Logo Score Error] URL={url} | Error={e}")
     return -1
 
 
 def convert_logo_to_white(file_path):
-  """Downloads the original logo, turns all visible pixels pure white, and returns a PIL Image."""
   if not file_path or file_path.endswith(".svg"):
     return None
 
-  url = f"{TMDB_IMAGE_BASE}{file_path}"
+  url = build_tmdb_image_url(file_path)
   try:
     res = requests.get(url, timeout=10)
     res.raise_for_status()
@@ -567,14 +567,11 @@ def convert_logo_to_white(file_path):
     white_img.putalpha(alpha)
     return white_img
   except Exception as e:
-    print(f"[Logo Convert Error] {file_path}: {e}")
+    print(f"[Logo Convert Error] URL={url} | Error={e}")
     return None
 
 
 def pick_best_light_logo(logo_list):
-  """
-    Returns either a TMDB file_path string (for light logos) or a white PIL Image (fallback).
-    """
   if not logo_list:
     return None
 
@@ -585,20 +582,21 @@ def pick_best_light_logo(logo_list):
     if score > 0:
       light_candidates.append((score, logo.get("vote_average", 0), fp))
 
-  # 1. Original light-colored logo found: return its file_path string
+  # 1. Original light-colored logo found: return its full URL
   if light_candidates:
     best_candidate = max(
         light_candidates,
         key=lambda item: (round(next(iter(item)) / 10), list(item).pop(1)),
     )
     best_score, _, best_fp = best_candidate
-    print(f"[Logo Selected] Light original: {best_fp} (score={best_score:.1f})")
-    return best_fp
+    full_url = build_tmdb_image_url(best_fp)
+    print(f"[Logo Selected] Light original: {full_url} (score={best_score:.1f})")
+    return full_url
 
   # 2. Fallback: All logos are dark—convert the highest-rated logo to pure white
   best_dark_logo = max(logo_list, key=lambda item: item.get("vote_average", 0))
   dark_fp = best_dark_logo.get("file_path")
-  print(f"[Logo Selected] Converting dark logo to white: {dark_fp}")
+  print(f"[Logo Selected] Converting dark logo to white: {build_tmdb_image_url(dark_fp)}")
   return convert_logo_to_white(dark_fp)
 
 
@@ -706,17 +704,16 @@ def process_image(image_url, title, is_movie, genre, year, rating, duration=None
         logo_drawn = False
 
 #### START UPDATED LOGO DRAW
-                        
+                                
         if logo_path:
           try:
             if isinstance(logo_path, Image.Image):
               logo_image = logo_path
             else:
-              logo_url = f"https://tmdb.org{logo_path}"
-              logo_response = requests.get(logo_url, timeout=10)
+              logo_response = requests.get(logo_path, timeout=10)
               if logo_response.status_code != 200:
                 raise Exception(
-                    f"HTTP {logo_response.status_code} fetching {logo_url}"
+                    f"HTTP {logo_response.status_code} fetching {logo_path}"
                 )
               logo_image = Image.open(BytesIO(logo_response.content))
         
