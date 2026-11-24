@@ -513,14 +513,15 @@ def build_tmdb_image_url(file_path):
 
 
 LIGHT_NEUTRAL_THRESHOLD = (
-    195  # Minimum average brightness for neutral white/silver logos (0-255)
+    200  # Minimum average brightness for neutral white/silver logos (0-255)
 )
 LIGHT_COLOR_THRESHOLD = (
     155  # Minimum blended brightness for neon/colored logos (0-255)
 )
 SATURATION_CUTOFF = 40  # Below this = neutral grey/white; above this = colored
-MIN_DARK_QUARTILE = (
-    115  # Reject if the darkest 25% of visible pixels average below this (0-255)
+DARK_PIXEL_LIMIT = 140  # Any pixel below this brightness counts as "dark/dull"
+MAX_DARK_PIXEL_RATIO = (
+    0.08  # Reject if more than 8% of visible pixels are dark/dull
 )
 
 
@@ -553,13 +554,15 @@ def get_light_logo_score(file_path):
     luminance = 0.299 * r_vis + 0.587 * g_vis + 0.114 * b_vis
     rgb_max = np.maximum(np.maximum(r_vis, g_vis), b_vis)
     rgb_min = np.minimum(np.minimum(r_vis, g_vis), b_vis)
-
-    # Per-pixel blended brightness
     pixel_brightness = (0.6 * luminance) + (0.4 * rgb_max)
 
-    # 1. Bottom-quartile check: catch logos with dark grey sections/subtitles alongside bright colors
-    dark_quartile = float(np.percentile(pixel_brightness, 25))
-    if dark_quartile < MIN_DARK_QUARTILE:
+    # 1. Dark-pixel ratio check: reject if >8% of visible pixels are dark/dull grey
+    dark_pixel_ratio = float(np.mean(pixel_brightness < DARK_PIXEL_LIMIT))
+    if dark_pixel_ratio > MAX_DARK_PIXEL_RATIO:
+      print(
+          f"[Logo Rejected] {file_path} has {dark_pixel_ratio:.1%} dark/grey"
+          " pixels"
+      )
       return -1
 
     # 2. Overall average checks
@@ -574,6 +577,11 @@ def get_light_logo_score(file_path):
       if effective_brightness < LIGHT_COLOR_THRESHOLD:
         return -1
 
+    print(
+        f"[Logo Passed] {file_path} | eff={effective_brightness:.1f},"
+        f" lum={avg_luminance:.1f}, sat={avg_saturation:.1f},"
+        f" dark={dark_pixel_ratio:.1%}"
+    )
     return effective_brightness
 
   except Exception as e:
