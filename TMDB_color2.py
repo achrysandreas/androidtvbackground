@@ -463,37 +463,167 @@ def clean_filename(filename):
 
 
 # Fetch movie or TV show logo in English
+#def get_logo(media_type, media_id, language):
+#    # Prepare language code (fr-FR -> fr)
+#    lang_code = language.split("-")[0]
+#
+#    # Build TMDB API URL
+#    url = f"{TMDB_BASE_URL}/{media_type}/{media_id}/images?language={LANGUAGE}"
+#    response = requests.get(url, headers=headers)
+#    if response.status_code != 200:
+#        return None
+#
+#    logos = response.json().get("logos", [])
+#
+#    # If no logos at all, try English fallback
+#    if not logos:
+#        url_en = f"{TMDB_BASE_URL}/{media_type}/{media_id}/images?language=en"
+#        response_en = requests.get(url_en, headers=headers)
+#        if response_en.status_code == 200:
+#            logos_en = response_en.json().get("logos", [])
+#            if logos_en:
+#                return sorted(logos_en, key=lambda x: x.get("vote_average", 0), reverse=True)[0]["file_path"]
+#        return None
+#
+#    # 1. Exact match for requested language
+#    lang_match = [l for l in logos if l.get("iso_639_1") == LANGUAGE]
+#    if lang_match:
+#        # Pick highest rated
+#        return sorted(lang_match, key=lambda x: x.get("vote_average", 0), reverse=True)[0]["file_path"]
+#
+#    # 4. Last fallback: best-rated logo overall
+#    return sorted(logos, key=lambda x: x.get("vote_average", 0), reverse=True)[0]["file_path"]
+
+######
+
+WHITE_THRESHOLD = (
+    200  # Minimum brightness (0-255) to be considered already "white"
+)
+FALLBACK_DIR = "fallback_logos"  # Directory to save converted white logos
+
+
+def get_logo_brightness(file_path):
+  """Downloads w300 thumbnail and calculates average brightness of visible pixels (0-255)."""
+  if not file_path or file_path.endswith(".svg"):
+    return -1
+
+  url = f"https://tmdb.org{file_path}"
+  try:
+    res = requests.get(url, timeout=5)
+    res.raise_for_status()
+
+    img = Image.open(BytesIO(res.content)).convert("RGBA")
+    data = np.array(img)
+
+    r, g, b, a = data[:, :, 0], data[:, :, 1], data[:, :, 2], data[:, :, 3]
+    visible_mask = a > 50  # Ignore transparent background pixels
+
+    if not np.any(visible_mask):
+      return -1
+
+    luminance = (
+        0.299 * r[visible_mask]
+        + 0.587 * g[visible_mask]
+        + 0.114 * b[visible_mask]
+    )
+    return float(np.mean(luminance))
+  except Exception:
+    return -1
+
+
+def convert_logo_to_white(file_path, output_dir=FALLBACK_DIR):
+  """Downloads the original logo, turns all visible pixels pure white, and saves it locally."""
+  if not file_path or file_path.endswith(".svg"):
+    return file_path
+
+  os.makedirs(output_dir, exist_ok=True)
+  filename = os.path.basename(file_path)
+  local_path = os.path.join(output_dir, filename)
+
+  # Return cached version if already converted
+  if os.path.exists(local_path):
+    return local_path
+
+  url = f"https://tmdb.org{file_path}"
+  try:
+    res = requests.get(url, timeout=10)
+    res.raise_for_status()
+
+    img = Image.open(BytesIO(res.content)).convert("RGBA")
+    data = np.array(img)
+
+    # Set Red, Green, and Blue channels to 255 (pure white), preserving original Alpha channel
+    data[:, :, 0] = 255
+    data[:, :, 1] = 255
+    data[:, :, 2] = 255
+
+    white_img = Image.fromarray(data, "RGBA")
+    white_img.save(local_path, "PNG")
+    return local_path
+  except Exception:
+    # If conversion fails, fall back to the original TMDB file_path
+    return file_path
+
+
+def pick_whitest_logo(logo_list):
+  """Returns a white logo file_path, converting the top-rated logo to white if none exist."""
+  if not logo_list:
+    return None
+
+  # Evaluate brightness for each candidate
+  scored_logos = []
+  for logo in logo_list:
+    fp = logo.get("file_path")
+    brightness = get_logo_brightness(fp)
+    scored_logos.append((brightness, logo.get("vote_average", 0), fp))
+
+  # Sort by brightness bucket first, then vote_average
+  scored_logos.sort(key=lambda x: (round(x / 5), x), reverse=True)
+  best_brightness, _, best_fp = scored_logos
+
+  # 1. If the brightest logo meets the white threshold, return its TMDB path
+  if best_brightness >= WHITE_THRESHOLD:
+    return best_fp
+
+  # 2. Fallback: Pick the highest-rated logo overall and convert it to white locally
+  highest_rated_fp = sorted(
+      logo_list, key=lambda x: x.get("vote_average", 0), reverse=True
+  )["file_path"]
+  return convert_logo_to_white(highest_rated_fp)
+
+
 def get_logo(media_type, media_id, language):
-    # Prepare language code (fr-FR -> fr)
-    lang_code = language.split("-")[0]
+  # Prepare language code (fr-FR -> fr)
+  lang_code = language.split("-")
 
-    # Build TMDB API URL
-    url = f"{TMDB_BASE_URL}/{media_type}/{media_id}/images?language={LANGUAGE}"
-    response = requests.get(url, headers=headers)
-    if response.status_code != 200:
-        return None
+  # Build TMDB API URL
+  url = f"{TMDB_BASE_URL}/{media_type}/{media_id}/images?language={lang_code}"
+  response = requests.get(url, headers=headers)
+  if response.status_code != 200:
+    return None
 
-    logos = response.json().get("logos", [])
+  logos = response.json().get("logos", [])
 
-    # If no logos at all, try English fallback
-    if not logos:
-        url_en = f"{TMDB_BASE_URL}/{media_type}/{media_id}/images?language=en"
-        response_en = requests.get(url_en, headers=headers)
-        if response_en.status_code == 200:
-            logos_en = response_en.json().get("logos", [])
-            if logos_en:
-                return sorted(logos_en, key=lambda x: x.get("vote_average", 0), reverse=True)[0]["file_path"]
-        return None
+  # If no logos at all, try English fallback
+  if not logos:
+    url_en = f"{TMDB_BASE_URL}/{media_type}/{media_id}/images?language=en"
+    response_en = requests.get(url_en, headers=headers)
+    if response_en.status_code == 200:
+      logos_en = response_en.json().get("logos", [])
+      if logos_en:
+        return pick_whitest_logo(logos_en)
+    return None
 
-    # 1. Exact match for requested language
-    lang_match = [l for l in logos if l.get("iso_639_1") == LANGUAGE]
-    if lang_match:
-        # Pick highest rated
-        return sorted(lang_match, key=lambda x: x.get("vote_average", 0), reverse=True)[0]["file_path"]
+  # 1. Exact match for requested language
+  lang_match = [l for l in logos if l.get("iso_639_1") == lang_code]
+  if lang_match:
+    return pick_whitest_logo(lang_match)
 
-    # 4. Last fallback: best-rated logo overall
-    return sorted(logos, key=lambda x: x.get("vote_average", 0), reverse=True)[0]["file_path"]
+  # 2. Last fallback: whitest logo overall
+  return pick_whitest_logo(logos)
 
+
+######
 
 def process_image(image_url, title, is_movie, genre, year, rating, duration=None, seasons=None):
     response = requests.get(image_url, timeout=10)
